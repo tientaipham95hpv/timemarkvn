@@ -7,19 +7,39 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check Xcode
+      - name: Select compatible Xcode
         run: |
+          set -euo pipefail
+          echo "Installed Xcode versions:"
+          ls -d /Applications/Xcode*.app 2>/dev/null || true
+
+          XCODE_APP=$(find /Applications -maxdepth 1 -type d -name 'Xcode_16*.app' | sort -V | tail -1)
+
+          if [ -z "$XCODE_APP" ]; then
+            echo "ERROR: No Xcode 16.x installation was found on this runner."
+            ls -d /Applications/Xcode*.app 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "Using: $XCODE_APP"
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
           xcode-select -p
           xcodebuild -version
 
       - name: Generate project
         run: bash ./generate_project.sh
+
+      - name: Verify generated Xcode project
+        run: |
+          set -euo pipefail
+          test -f TimeMarkVN.xcodeproj/project.pbxproj
+          grep -E 'objectVersion|compatibilityVersion' TimeMarkVN.xcodeproj/project.pbxproj | head -5 || true
 
       - name: Build unsigned app
         run: |
