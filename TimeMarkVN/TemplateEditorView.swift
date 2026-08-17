@@ -23,14 +23,14 @@ struct TemplateEditorView: View {
             VStack(spacing: 0) {
                 // Header Bar
                 HStack {
-                    Text("Thiết kế Watermark")
+                    Text(NSLocalizedString("Thiết kế Watermark", comment: ""))
                         .font(.system(.title3, design: .rounded).bold())
                         .foregroundStyle(.white)
                     Spacer()
                     Button {
                         dismiss()
                     } label: {
-                        Text("Xong")
+                        Text(NSLocalizedString("Xong", comment: ""))
                             .font(.system(.subheadline).bold())
                             .foregroundStyle(.black)
                             .padding(.horizontal, 16)
@@ -43,7 +43,7 @@ struct TemplateEditorView: View {
                 
                 // Live Watermark Preview Container
                 VStack {
-                    Text("XEM TRƯỚC WATERMARK")
+                    Text(NSLocalizedString("XEM TRƯỚC WATERMARK", comment: ""))
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .foregroundStyle(.white.opacity(0.4))
                         .tracking(1.5)
@@ -100,13 +100,13 @@ struct TemplateEditorView: View {
                 
                 // Custom Segmented Picker (Tab Switcher)
                 HStack(spacing: 0) {
-                    TabButton(title: "Trường dữ liệu", icon: "list.bullet.rectangle", isActive: activeTab == 0) {
+                    TabButton(title: NSLocalizedString("Trường dữ liệu", comment: ""), icon: "list.bullet.rectangle", isActive: activeTab == 0) {
                         activeTab = 0
                     }
-                    TabButton(title: "Kiểu dáng", icon: "slider.horizontal.3", isActive: activeTab == 1) {
+                    TabButton(title: NSLocalizedString("Kiểu dáng", comment: ""), icon: "slider.horizontal.3", isActive: activeTab == 1) {
                         activeTab = 1
                     }
-                    TabButton(title: "Mẫu & Logo", icon: "folder.fill", isActive: activeTab == 2) {
+                    TabButton(title: NSLocalizedString("Mẫu & Logo", comment: ""), icon: "folder.fill", isActive: activeTab == 2) {
                         activeTab = 2
                     }
                 }
@@ -121,7 +121,7 @@ struct TemplateEditorView: View {
                         if activeTab == 0 {
                             // Fields Tab
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("BẬT / TẮT THÔNG TIN")
+                                Text(NSLocalizedString("BẬT / TẮT THÔNG TIN", comment: ""))
                                     .font(.system(.caption, design: .monospaced).bold())
                                     .foregroundStyle(.white.opacity(0.4))
                                     .tracking(1.5)
@@ -154,12 +154,12 @@ struct TemplateEditorView: View {
                             VStack(alignment: .leading, spacing: 20) {
                                 // Text Customizer Card
                                 VStack(alignment: .leading, spacing: 12) {
-                                    Text("CHỮ TÙY CHỈNH")
+                                    Text(NSLocalizedString("CHỮ TÙY CHỈNH", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    TextField("Nhập chữ tùy chỉnh...", text: $stamp.style.customText)
+                                    TextField(NSLocalizedString("Nhập chữ tùy chỉnh...", comment: ""), text: $stamp.style.customText)
                                         .font(.body)
                                         .foregroundStyle(.white)
                                         .padding(.all, 14)
@@ -172,14 +172,14 @@ struct TemplateEditorView: View {
                                 
                                 // Sliders Card
                                 VStack(alignment: .leading, spacing: 24) {
-                                    Text("CÂN CHỈNH KÍCH THƯỚC")
+                                    Text(NSLocalizedString("CÂN CHỈNH KÍCH THƯỚC", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    CustomSliderRow(title: "Cỡ chữ", val: $stamp.style.fontSize, range: 14...36, symbol: "textformat.size")
-                                    CustomSliderRow(title: "Độ trong suốt", val: $stamp.style.opacity, range: 0.25...0.95, symbol: "eye.fill")
-                                    CustomSliderRow(title: "Độ bo góc nền", val: $stamp.style.cornerRadius, range: 0...32, symbol: "skew")
+                                    CustomSliderRow(title: NSLocalizedString("Cỡ chữ", comment: ""), val: $stamp.style.fontSize, range: 14...36, symbol: "textformat.size")
+                                    CustomSliderRow(title: NSLocalizedString("Trong suốt", comment: ""), val: $stamp.style.opacity, range: 0.25...0.95, symbol: "eye.fill")
+                                    CustomSliderRow(title: NSLocalizedString("Bo góc", comment: ""), val: $stamp.style.cornerRadius, range: 0...32, symbol: "skew")
                                 }
                                 .padding(.all, 16)
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
@@ -190,7 +190,7 @@ struct TemplateEditorView: View {
                             VStack(spacing: 20) {
                                 // Logo section card
                                 VStack(alignment: .leading, spacing: 14) {
-                                    Text("LOGO THƯƠNG HIỆU")
+                                    Text(NSLocalizedString("LOGO THƯƠNG HIỆU", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
@@ -199,7 +199,7 @@ struct TemplateEditorView: View {
                                         HStack {
                                             Image(systemName: "photo.badge.plus")
                                                 .font(.headline)
-                                            Text(stamp.logo != nil ? "Thay đổi logo cá nhân" : "Chọn logo thương hiệu của bạn")
+                                            Text(stamp.logo != nil ? NSLocalizedString("Thay đổi logo cá nhân", comment: "") : NSLocalizedString("Chọn logo thương hiệu của bạn", comment: ""))
                                                 .font(.body.bold())
                                             Spacer()
                                             if let logo = stamp.logo {
@@ -222,7 +222,7 @@ struct TemplateEditorView: View {
                                 
                                 // Save Template section card
                                 VStack(alignment: .leading, spacing: 14) {
-                                    Text("LƯU MẪU ĐÃ THIẾT KẾ")
+                                    Text(NSLocalizedString("LƯU MẪU ĐÃ THIẾT KẾ", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
@@ -234,7 +234,7 @@ struct TemplateEditorView: View {
                                             paywall = true
                                         }
                                     } label: {
-                                        Label("Lưu thiết kế hiện tại", systemImage: "square.and.arrow.down.fill")
+                                        Label(NSLocalizedString("Lưu thiết kế hiện tại", comment: ""), systemImage: "square.and.arrow.down.fill")
                                             .font(.body.bold())
                                             .foregroundStyle(.black)
                                             .frame(maxWidth: .infinity)
@@ -276,30 +276,30 @@ struct TemplateEditorView: View {
                                 
                                 // Presets section card
                                 VStack(alignment: .leading, spacing: 14) {
-                                    Text("PRESETS CÀI ĐẶT NHANH")
+                                    Text(NSLocalizedString("PRESETS CÀI ĐẶT NHANH", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
                                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                                        PresetButton(title: "Cơ bản", icon: "doc.plaintext") {
+                                        PresetButton(title: NSLocalizedString("Cơ bản", comment: ""), icon: "doc.plaintext") {
                                             stamp.style = StampStyle()
                                         }
-                                        PresetButton(title: "Công trình", icon: "building.2") {
+                                        PresetButton(title: NSLocalizedString("Công trình", comment: ""), icon: "building.2") {
                                             var s = StampStyle()
                                             s.enabled[.altitude] = true
                                             s.enabled[.compass] = true
                                             s.enabled[.map] = true
                                             stamp.style = s
                                         }
-                                        PresetButton(title: "Du lịch", icon: "airplane") {
+                                        PresetButton(title: NSLocalizedString("Du lịch", comment: ""), icon: "airplane") {
                                             var s = StampStyle()
                                             s.enabled[.altitude] = true
                                             s.enabled[.weather] = true
                                             s.enabled[.map] = true
                                             stamp.style = s
                                         }
-                                        PresetButton(title: "Ngày lớn", icon: "calendar.badge.clock") {
+                                        PresetButton(title: NSLocalizedString("Ngày lớn", comment: ""), icon: "calendar.badge.clock") {
                                             var s = StampStyle()
                                             s.enabled[.gps] = false
                                             s.enabled[.map] = false
@@ -319,13 +319,13 @@ struct TemplateEditorView: View {
                 }
             }
         }
-        .alert("Lưu template", isPresented: $showName) {
-            TextField("Tên template", text: $templateName)
-            Button("Lưu") {
-                stamp.saveTemplate(name: templateName.isEmpty ? "Template mới" : templateName)
+        .alert(NSLocalizedString("Lưu template", comment: ""), isPresented: $showName) {
+            TextField(NSLocalizedString("Tên template", comment: ""), text: $templateName)
+            Button(NSLocalizedString("Lưu", comment: "")) {
+                stamp.saveTemplate(name: templateName.isEmpty ? NSLocalizedString("Template mới", comment: "") : templateName)
                 templateName = ""
             }
-            Button("Hủy", role: .cancel) {}
+            Button(NSLocalizedString("Hủy", comment: ""), role: .cancel) {}
         }
         .sheet(isPresented: $paywall) { ProPaywallView() }
         .task(id: logoItem) {
@@ -333,79 +333,6 @@ struct TemplateEditorView: View {
                let image = UIImage(data: data) {
                 stamp.loadLogo(image)
             }
-        }
-    }
-}
-
-// Subview Component for Custom Segmented Tab
-struct TabButton: View {
-    let title: String
-    let icon: String
-    let isActive: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.subheadline)
-                Text(title)
-                    .font(.system(size: 11, weight: .bold))
-            }
-            .foregroundStyle(isActive ? .black : .white.opacity(0.6))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .background(isActive ? Color.yellow : Color.clear, in: RoundedRectangle(cornerRadius: 10))
-            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isActive)
-        }
-    }
-}
-
-// Subview Component for Sliders
-struct CustomSliderRow: View {
-    let title: String
-    @Binding var val: Double
-    let range: ClosedRange<Double>
-    let symbol: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Label(title, systemImage: symbol)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.white)
-                Spacer()
-                Text(String(format: title.contains("suất") ? "%.0f%%" : "%.0f px", title.contains("suất") ? val * 100 : val))
-                    .font(.system(.subheadline, design: .monospaced))
-                    .foregroundStyle(.yellow)
-            }
-            
-            Slider(value: $val, in: range)
-                .tint(.yellow)
-        }
-    }
-}
-
-// Subview Component for Preset Buttons
-struct PresetButton: View {
-    let title: String
-    let icon: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.subheadline)
-                    .foregroundStyle(.yellow)
-                Text(title)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.white)
-                Spacer()
-            }
-            .padding(.all, 14)
-            .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.1), lineWidth: 1))
         }
     }
 }

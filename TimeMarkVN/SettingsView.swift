@@ -31,7 +31,7 @@ struct SettingsView: View {
                             .tracking(4.0)
                             .foregroundStyle(.white)
                         
-                        Text("Phiên bản 5.0 • Chuyên nghiệp")
+                        Text(NSLocalizedString("Phiên bản 5.0 • Chuyên nghiệp", comment: ""))
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.4))
                     }
@@ -40,17 +40,17 @@ struct SettingsView: View {
                     
                     // Account Premium Card
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("TÀI KHOẢN")
+                        Text(NSLocalizedString("Tài khoản", comment: "").uppercased())
                             .font(.system(.caption, design: .monospaced).bold())
                             .foregroundStyle(.white.opacity(0.4))
                             .tracking(1.5)
                         
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(store.isPro ? "Tài khoản Pro" : "Tài khoản Free")
+                                Text(store.isPro ? NSLocalizedString("Tài khoản Pro", comment: "") : NSLocalizedString("Tài khoản Free", comment: ""))
                                     .font(.headline.bold())
                                     .foregroundStyle(.white)
-                                Text(store.isPro ? "Bạn đã kích hoạt toàn bộ tính năng cao cấp." : "Nâng cấp để mở khóa các công cụ bị giới hạn.")
+                                Text(store.isPro ? NSLocalizedString("Bạn đã kích hoạt toàn bộ tính năng cao cấp.", comment: "") : NSLocalizedString("Nâng cấp để mở khóa các công cụ bị giới hạn.", comment: ""))
                                     .font(.caption)
                                     .foregroundStyle(.white.opacity(0.5))
                             }
@@ -66,7 +66,7 @@ struct SettingsView: View {
                                 Button {
                                     paywall = true
                                 } label: {
-                                    Text("Nâng cấp")
+                                    Text(NSLocalizedString("Nâng cấp", comment: ""))
                                         .font(.subheadline.bold())
                                         .foregroundStyle(.black)
                                         .padding(.horizontal, 16)
@@ -86,7 +86,7 @@ struct SettingsView: View {
                     
                     // Core tools Card
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("CÔNG CỤ NÂNG CAO")
+                        Text(NSLocalizedString("CÔNG CỤ NÂNG CAO", comment: ""))
                             .font(.system(.caption, design: .monospaced).bold())
                             .foregroundStyle(.white.opacity(0.4))
                             .tracking(1.5)
@@ -106,10 +106,10 @@ struct SettingsView: View {
                                     .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Xuất watermark hàng loạt")
+                                    Text(NSLocalizedString("Xuất watermark hàng loạt", comment: ""))
                                         .font(.body.bold())
                                         .foregroundStyle(.white)
-                                    Text("Đóng dấu và lưu nhiều ảnh cùng một lúc")
+                                    Text(NSLocalizedString("Đóng dấu và lưu nhiều ảnh cùng một lúc", comment: ""))
                                         .font(.caption)
                                         .foregroundStyle(.white.opacity(0.5))
                                 }
@@ -129,16 +129,16 @@ struct SettingsView: View {
                     
                     // Pro Features List Card
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("QUYỀN LỢI PREMIUM")
+                        Text(NSLocalizedString("QUYỀN LỢI PREMIUM", comment: ""))
                             .font(.system(.caption, design: .monospaced).bold())
                             .foregroundStyle(.white.opacity(0.4))
                             .tracking(1.5)
                         
                         VStack(alignment: .leading, spacing: 16) {
-                            SettingsFeatureRow(icon: "rectangle.stack.fill", title: "Mẫu template không giới hạn")
-                            SettingsFeatureRow(icon: "square.stack.3d.up.fill", title: "Tính năng Batch Export")
-                            SettingsFeatureRow(icon: "wand.and.stars", title: "Chèn logo doanh nghiệp sắc nét")
-                            SettingsFeatureRow(icon: "nosign", title: "Không có quảng cáo làm phiền")
+                            SettingsFeatureRow(icon: "rectangle.stack.fill", title: NSLocalizedString("Template không giới hạn", comment: ""))
+                            SettingsFeatureRow(icon: "square.stack.3d.up.fill", title: NSLocalizedString("Batch export", comment: ""))
+                            SettingsFeatureRow(icon: "wand.and.stars", title: NSLocalizedString("Logo & watermark nâng cao", comment: ""))
+                            SettingsFeatureRow(icon: "nosign", title: NSLocalizedString("Không quảng cáo", comment: ""))
                         }
                         .padding(.all, 20)
                         .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
@@ -153,7 +153,7 @@ struct SettingsView: View {
                         } label: {
                             HStack {
                                 Spacer()
-                                Label("Khôi phục giao dịch đã mua", systemImage: "arrow.clockwise.circle.fill")
+                                Label(NSLocalizedString("Khôi phục giao dịch đã mua", comment: ""), systemImage: "arrow.clockwise.circle.fill")
                                     .font(.subheadline.bold())
                                     .foregroundStyle(.yellow)
                                 Spacer()
@@ -165,10 +165,10 @@ struct SettingsView: View {
                         
                         // App Version Info
                         VStack(spacing: 4) {
-                            Text("TimeMark VN v5.0 (Build 2026)")
+                            Text(NSLocalizedString("TimeMark VN v5.0 (Build 2026)", comment: ""))
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundStyle(.white.opacity(0.3))
-                            Text("Thiết kế tối ưu cho StoreKit 2 & iOS 17+")
+                            Text(NSLocalizedString("Thiết kế tối ưu cho StoreKit 2 & iOS 17+", comment: ""))
                                 .font(.system(size: 10))
                                 .foregroundStyle(.white.opacity(0.25))
                         }

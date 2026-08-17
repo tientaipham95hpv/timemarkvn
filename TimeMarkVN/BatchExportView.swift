@@ -54,7 +54,7 @@ struct BatchExportView: View {
                         VStack(spacing: 12) {
                             if exporting {
                                 HStack {
-                                    Text("Đang xử lý...")
+                                    Text(NSLocalizedString("Đang xử lý...", comment: ""))
                                         .font(.subheadline.bold())
                                         .foregroundStyle(.white)
                                     Spacer()
@@ -83,7 +83,7 @@ struct BatchExportView: View {
                             if !message.isEmpty {
                                 Text(message)
                                     .font(.caption.bold())
-                                    .foregroundStyle(message.contains("thành công") || message.contains("Đã") ? .yellow : .white.opacity(0.6))
+                                    .foregroundStyle(message.contains("thành công") || message.contains("Đã") || message.contains("Successfully") ? .yellow : .white.opacity(0.6))
                                     .padding(.top, 4)
                             }
                         }
@@ -101,7 +101,7 @@ struct BatchExportView: View {
                         HStack {
                             Image(systemName: "square.and.arrow.up.fill")
                                 .font(.body.bold())
-                            Text(selected.isEmpty ? "Chọn ảnh cần xuất" : "Xuất \(selected.count) ảnh đã chọn")
+                            Text(selected.isEmpty ? NSLocalizedString("Chọn ảnh cần xuất", comment: "") : String(format: NSLocalizedString("Xuất %d ảnh đã chọn", comment: ""), selected.count))
                                 .font(.body.bold())
                         }
                         .foregroundStyle(selected.isEmpty || exporting ? .white.opacity(0.3) : .black)
@@ -115,18 +115,18 @@ struct BatchExportView: View {
                     .padding(.top, 8)
                 }
             }
-            .navigationTitle("Batch Export")
+            .navigationTitle(NSLocalizedString("Batch export", comment: ""))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Hủy") {
+                    Button(NSLocalizedString("Hủy", comment: "")) {
                         dismiss()
                     }
                     .foregroundStyle(.white.opacity(0.8))
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Chọn tất cả") {
+                    Button(NSLocalizedString("Chọn tất cả", comment: "")) {
                         if selected.count == assets.count {
                             selected.removeAll()
                         } else {
@@ -152,7 +152,7 @@ struct BatchExportView: View {
 
     private func export() {
         guard store.isPro else {
-            message = "Batch Export là tính năng Pro."
+            message = NSLocalizedString("Batch Export là tính năng Pro.", comment: "")
             return
         }
 
@@ -185,7 +185,7 @@ struct BatchExportView: View {
                 progress = Double(index + 1) / Double(max(images.count, 1))
             }
             exporting = false
-            message = "Đã đóng dấu thành công \(images.count) ảnh vào Thư viện."
+            message = String(format: NSLocalizedString("Đã đóng dấu thành công %d ảnh vào Thư viện.", comment: ""), images.count)
         }
     }
 }

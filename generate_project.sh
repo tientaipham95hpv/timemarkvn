@@ -20,6 +20,7 @@ targets:
     deploymentTarget: $(echo "$DEPLOYMENT")
     sources:
       - path: TimeMarkVN
+    entitlements: TimeMarkVN/TimeMarkVN.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(echo "$BUNDLE")

@@ -25,7 +25,7 @@ final class ProStore: ObservableObject {
             products = try await Product.products(for: productIDs).sorted { $0.price < $1.price }
             await updateEntitlement()
         } catch {
-            message = "Không tải được sản phẩm."
+            message = NSLocalizedString("Không tải được sản phẩm.", comment: "")
         }
     }
 
@@ -39,17 +39,17 @@ final class ProStore: ObservableObject {
                     await transaction.finish()
                     await updateEntitlement()
                 case .unverified:
-                    message = "Không xác minh được giao dịch."
+                    message = NSLocalizedString("Không xác minh được giao dịch.", comment: "")
                 }
             case .userCancelled:
                 break
             case .pending:
-                message = "Giao dịch đang chờ xử lý."
+                message = NSLocalizedString("Giao dịch đang chờ xử lý.", comment: "")
             @unknown default:
                 break
             }
         } catch {
-            message = "Mua Pro thất bại."
+            message = NSLocalizedString("Mua Pro thất bại.", comment: "")
         }
     }
 
@@ -58,7 +58,7 @@ final class ProStore: ObservableObject {
             try await AppStore.sync()
             await updateEntitlement()
         } catch {
-            message = "Không thể khôi phục giao dịch."
+            message = NSLocalizedString("Không thể khôi phục giao dịch.", comment: "")
         }
     }
 

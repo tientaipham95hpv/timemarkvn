@@ -7,15 +7,15 @@ enum StampField: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .address: return "Địa chỉ"
-        case .date: return "Ngày & giờ"
-        case .gps: return "Tọa độ GPS"
-        case .altitude: return "Độ cao"
-        case .compass: return "La bàn"
-        case .weather: return "Thời tiết"
-        case .map: return "Bản đồ"
-        case .custom: return "Chữ tùy chỉnh"
-        case .logo: return "Logo"
+        case .address: return NSLocalizedString("Địa chỉ", comment: "")
+        case .date: return NSLocalizedString("Ngày & giờ", comment: "")
+        case .gps: return NSLocalizedString("Tọa độ GPS", comment: "")
+        case .altitude: return NSLocalizedString("Độ cao", comment: "")
+        case .compass: return NSLocalizedString("La bàn", comment: "")
+        case .weather: return NSLocalizedString("Thời tiết", comment: "")
+        case .map: return NSLocalizedString("Bản đồ", comment: "")
+        case .custom: return NSLocalizedString("Chữ tùy chỉnh", comment: "")
+        case .logo: return NSLocalizedString("Logo", comment: "")
         }
     }
 
@@ -63,9 +63,38 @@ final class StampStore: ObservableObject {
     private let key = "timemark.templates.v5"
 
     init() {
-        if let data = UserDefaults.standard.data(forKey: key),
-           let value = try? JSONDecoder().decode([SavedTemplate].self, from: data) {
-            templates = value
+        loadFromLocalAndCloud()
+        
+        // Listen for iCloud external changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ubiquitousKeyValueStoreDidChange),
+            name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: NSUbiquitousKeyValueStore.default
+        )
+        NSUbiquitousKeyValueStore.default.synchronize()
+    }
+    
+    @objc private func ubiquitousKeyValueStoreDidChange(notification: Notification) {
+        DispatchQueue.main.async {
+            self.loadFromLocalAndCloud()
+        }
+    }
+    
+    private func loadFromLocalAndCloud() {
+        // Try cloud first
+        if let cloudData = NSUbiquitousKeyValueStore.default.data(forKey: key),
+           let cloudValues = try? JSONDecoder().decode([SavedTemplate].self, from: cloudData) {
+            self.templates = cloudValues
+            // Keep local cached in sync
+            UserDefaults.standard.set(cloudData, forKey: key)
+            return
+        }
+        
+        // Fallback to local user defaults
+        if let localData = UserDefaults.standard.data(forKey: key),
+           let localValues = try? JSONDecoder().decode([SavedTemplate].self, from: localData) {
+            self.templates = localValues
         }
     }
 
@@ -85,7 +114,11 @@ final class StampStore: ObservableObject {
 
     private func persist() {
         if let data = try? JSONEncoder().encode(templates) {
+            // Save locally
             UserDefaults.standard.set(data, forKey: key)
+            // Save to iCloud
+            NSUbiquitousKeyValueStore.default.set(data, forKey: key)
+            NSUbiquitousKeyValueStore.default.synchronize()
         }
     }
 

@@ -15,8 +15,8 @@ struct GalleryView: View {
                     }
                 }
             }
-            .navigationTitle("Thư viện")
-            .toolbar { Button("Làm mới") { load() } }
+            .navigationTitle(NSLocalizedString("Thư viện", comment: ""))
+            .toolbar { Button(NSLocalizedString("Làm mới", comment: "")) { load() } }
             .task { load() }
             .sheet(isPresented: Binding(
                 get: { selected != nil },
@@ -79,13 +79,13 @@ struct AssetDetailView: View {
                 else { ProgressView() }
             }
             .background(.black)
-            .navigationTitle("Ảnh")
+            .navigationTitle(NSLocalizedString("Ảnh", comment: ""))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Đóng") { dismiss() }
+                    Button(NSLocalizedString("Đóng", comment: "")) { dismiss() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Chia sẻ") { share = true }
+                    Button(NSLocalizedString("Chia sẻ", comment: "")) { share = true }
                 }
             }
             .task {

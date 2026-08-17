@@ -214,7 +214,7 @@ struct CameraView: View {
                     .font(.caption)
             }
             if stamp.style.isEnabled(.altitude) {
-                Text(String(format: "Độ cao: %.0f m", location.altitude))
+                Text(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
                     .font(.caption)
             }
         }
@@ -287,11 +287,11 @@ struct ProPaywallView: View {
                             .shadow(color: .yellow.opacity(0.35), radius: 12)
                             .padding(.top, 24)
                         
-                        Text("TimeMark Pro")
+                        Text(NSLocalizedString("TimeMark Pro", comment: ""))
                             .font(.system(.title, design: .rounded).bold())
                             .foregroundStyle(.white)
                         
-                        Text("Mở khóa các công cụ chuyên nghiệp tốt nhất")
+                        Text(NSLocalizedString("Mở khóa các công cụ chuyên nghiệp tốt nhất", comment: ""))
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.6))
                     }
@@ -300,16 +300,24 @@ struct ProPaywallView: View {
                     
                     // Features
                     VStack(spacing: 14) {
-                        FeatureRow(icon: "rectangle.stack.fill", title: "Template không giới hạn", desc: "Tạo và lưu không giới hạn các mẫu thiết kế của riêng bạn.")
-                        FeatureRow(icon: "square.stack.3d.up.fill", title: "Batch Export", desc: "Đóng dấu watermark hàng loạt hình ảnh cùng một lúc, tiết kiệm thời gian.")
-                        FeatureRow(icon: "wand.and.stars", title: "Logo & Watermark nâng cao", desc: "Tùy chỉnh chèn logo thương hiệu cá nhân với chất lượng sắc nét.")
-                        FeatureRow(icon: "nosign", title: "Trải nghiệm mượt mà", desc: "Loại bỏ hoàn toàn quảng cáo để tập trung tối đa cho công việc.")
+                        FeatureRow(icon: "rectangle.stack.fill",
+                                   title: NSLocalizedString("Template không giới hạn", comment: ""),
+                                   desc: NSLocalizedString("Tạo và lưu không giới hạn các mẫu thiết kế của riêng bạn.", comment: ""))
+                        FeatureRow(icon: "square.stack.3d.up.fill",
+                                   title: NSLocalizedString("Batch export", comment: ""),
+                                   desc: NSLocalizedString("Đóng dấu watermark hàng loạt hình ảnh cùng một lúc, tiết kiệm thời gian.", comment: ""))
+                        FeatureRow(icon: "wand.and.stars",
+                                   title: NSLocalizedString("Logo & watermark nâng cao", comment: ""),
+                                   desc: NSLocalizedString("Tùy chỉnh chèn logo thương hiệu cá nhân với chất lượng sắc nét.", comment: ""))
+                        FeatureRow(icon: "nosign",
+                                   title: NSLocalizedString("Không quảng cáo", comment: ""),
+                                   desc: NSLocalizedString("Loại bỏ hoàn toàn quảng cáo để tập trung tối đa cho công việc.", comment: ""))
                     }
                     .padding(.horizontal)
                     
                     // Gói sản phẩm
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("DANH SÁCH GÓI")
+                        Text(NSLocalizedString("DANH SÁCH GÓI", comment: ""))
                             .font(.system(.caption, design: .monospaced).bold())
                             .foregroundStyle(.white.opacity(0.4))
                             .tracking(1.5)
@@ -320,7 +328,7 @@ struct ProPaywallView: View {
                                 ProgressView()
                                     .tint(.yellow)
                                     .padding()
-                                Text("Đang kết nối App Store...")
+                                Text(NSLocalizedString("Đang kết nối App Store...", comment: ""))
                                     .font(.caption)
                                     .foregroundStyle(.white.opacity(0.4))
                             }
@@ -352,7 +360,7 @@ struct ProPaywallView: View {
                                                 .foregroundStyle(.yellow)
                                             
                                             if product.id.contains("yearly") {
-                                                Text("TIẾT KIỆM 30%")
+                                                Text(NSLocalizedString("TIẾT KIỆM 30%", comment: ""))
                                                     .font(.system(size: 8, weight: .bold))
                                                     .foregroundStyle(.black)
                                                     .padding(.horizontal, 8)
@@ -381,13 +389,13 @@ struct ProPaywallView: View {
                         Button {
                             Task { await store.restore() }
                         } label: {
-                            Text("Khôi phục giao dịch đã mua")
+                            Text(NSLocalizedString("Khôi phục giao dịch đã mua", comment: ""))
                                 .font(.subheadline.bold())
                                 .foregroundStyle(.yellow)
                         }
                         .padding(.top, 8)
                         
-                        Text("Thanh toán sẽ được tính vào tài khoản App Store của bạn. Hủy bất kỳ lúc nào ít nhất 24 giờ trước khi kết thúc chu kỳ.")
+                        Text(NSLocalizedString("Thanh toán sẽ được tính vào tài khoản App Store của bạn. Hủy bất kỳ lúc nào ít nhất 24 giờ trước khi kết thúc chu kỳ.", comment: ""))
                             .font(.system(size: 10))
                             .foregroundStyle(.white.opacity(0.3))
                             .multilineTextAlignment(.center)
@@ -405,35 +413,5 @@ struct ProPaywallView: View {
                     .padding()
             }
         }
-    }
-}
-
-struct FeatureRow: View {
-    let icon: String
-    let title: String
-    let desc: String
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(.yellow)
-                .frame(width: 44, height: 44)
-                .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.08), lineWidth: 1))
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                Text(desc)
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.5))
-            }
-            Spacer()
-        }
-        .padding(.all, 12)
-        .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.05), lineWidth: 1))
     }
 }

@@ -4,11 +4,11 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     private let manager = CLLocationManager()
 
     @Published var coordinate: CLLocationCoordinate2D?
-    @Published var address = "Đang xác định vị trí..."
+    @Published var address = NSLocalizedString("Đang xác định vị trí...", comment: "")
     @Published var altitude: Double = 0
     @Published var heading: Double = 0
     @Published var temperature = "--°C"
-    @Published var weatherText = "Chưa có dữ liệu"
+    @Published var weatherText = NSLocalizedString("Chưa có dữ liệu", comment: "")
 
     override init() {
         super.init()

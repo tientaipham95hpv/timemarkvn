@@ -31,10 +31,10 @@ enum StampRenderer {
                 lines.append(String(format: "%.6f° N   %.6f° E", c.latitude, c.longitude))
             }
             if style.isEnabled(.altitude) {
-                lines.append(String(format: "Độ cao: %.0f m", location.altitude))
+                lines.append(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
             }
             if style.isEnabled(.compass) {
-                lines.append(String(format: "La bàn: %.0f°", location.heading))
+                lines.append(String(format: NSLocalizedString("La bàn: %.0f°", comment: ""), location.heading))
             }
             if style.isEnabled(.weather) {
                 lines.append("☁️ \(location.temperature) • \(location.weatherText)")

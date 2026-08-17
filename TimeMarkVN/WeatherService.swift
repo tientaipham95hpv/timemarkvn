@@ -13,20 +13,20 @@ enum WeatherService {
                   let current = json["current"] as? [String: Any],
                   let temp = current["temperature_2m"] as? Double,
                   let code = current["weather_code"] as? Int else {
-                completion("--°C", "Không có dữ liệu")
+                completion("--°C", NSLocalizedString("Chưa có dữ liệu", comment: ""))
                 return
             }
 
             let text: String
             switch code {
-            case 0: text = "Trời quang"
-            case 1...3: text = "Có mây"
-            case 45...48: text = "Sương mù"
-            case 51...67: text = "Mưa"
-            case 71...77: text = "Tuyết"
-            case 80...82: text = "Mưa rào"
-            case 95...99: text = "Dông"
-            default: text = "Thời tiết"
+            case 0: text = NSLocalizedString("Trời quang", comment: "")
+            case 1...3: text = NSLocalizedString("Có mây", comment: "")
+            case 45...48: text = NSLocalizedString("Sương mù", comment: "")
+            case 51...67: text = NSLocalizedString("Mưa", comment: "")
+            case 71...77: text = NSLocalizedString("Tuyết", comment: "")
+            case 80...82: text = NSLocalizedString("Mưa rào", comment: "")
+            case 95...99: text = NSLocalizedString("Dông", comment: "")
+            default: text = NSLocalizedString("Thời tiết", comment: "")
             }
 
             DispatchQueue.main.async {
