@@ -77,6 +77,9 @@ jobs:
           mkdir -p build/Payload
           cp -R "$APP_PATH" build/Payload/GeoStamp.app
 
+          echo "Inspecting Info.plist structure:"
+          plutil -p build/Payload/GeoStamp.app/Info.plist
+
           # Strip Xcode's ad-hoc _CodeSignature to prevent conflicts when signing with ESign/Scarlet/GBox
           rm -rf build/Payload/GeoStamp.app/_CodeSignature
 
