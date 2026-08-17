@@ -110,6 +110,9 @@ enum StampRenderer {
             
             let accentColor = UIColor(hex: style.accentHex) ?? UIColor.yellow
 
+            let posX = CGFloat(style.x)
+            let posY = CGFloat(style.y)
+
             if style.layoutType == "minimalist" {
                 let joinedText = lines.joined(separator: "   •   ")
                 let attrs: [NSAttributedString.Key: Any] = [
@@ -117,8 +120,8 @@ enum StampRenderer {
                     .foregroundColor: UIColor.white
                 ]
                 let textSize = joinedText.size(withAttributes: attrs)
-                let drawX = max(20, min(w - textSize.width - 20, (w - textSize.width) * style.x))
-                let drawY = max(20, min(h - textSize.height - 20, (h - textSize.height) * style.y))
+                let drawX = max(20, min(w - textSize.width - 20, (w - textSize.width) * posX))
+                let drawY = max(20, min(h - textSize.height - 20, (h - textSize.height) * posY))
                 let drawRect = CGRect(x: drawX, y: drawY, width: textSize.width, height: textSize.height)
                 
                 let shadowAttrs: [NSAttributedString.Key: Any] = [
@@ -130,8 +133,8 @@ enum StampRenderer {
                 
             } else if style.layoutType == "badge" {
                 let badgeSize: CGFloat = min(w * 0.35, 360)
-                let bx = max(20, min(w - badgeSize - 20, (w - badgeSize) * style.x))
-                let by = max(20, min(h - badgeSize - 20, (h - badgeSize) * style.y))
+                let bx = max(20, min(w - badgeSize - 20, (w - badgeSize) * posX))
+                let by = max(20, min(h - badgeSize - 20, (h - badgeSize) * posY))
                 let badgeBox = CGRect(x: bx, y: by, width: badgeSize, height: badgeSize)
                 
                 UIColor.black.withAlphaComponent(style.opacity).setFill()
@@ -171,11 +174,11 @@ enum StampRenderer {
                 
                 let minX: CGFloat = 20
                 let maxX: CGFloat = max(minX, w - boxW - 20)
-                let x = max(minX, min(maxX, (w - boxW) * style.x))
+                let x = max(minX, min(maxX, (w - boxW) * posX))
 
                 let minY: CGFloat = 20
                 let maxY: CGFloat = max(minY, h - boxH - 20)
-                let y = max(minY, min(maxY, (h - boxH) * style.y))
+                let y = max(minY, min(maxY, (h - boxH) * posY))
                 
                 let box = CGRect(x: x, y: y, width: boxW, height: boxH)
 
