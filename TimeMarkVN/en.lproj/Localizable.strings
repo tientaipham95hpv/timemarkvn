@@ -112,3 +112,9 @@
 "Màu sắc chữ ký" = "Watermark Color";
 "Tự động" = "Auto";
 "Thủ công" = "Manual";
+"KIỂU CHỮ" = "FONT DESIGN";
+"Kiểu chữ chữ ký" = "Watermark Font";
+"Mặc định" = "Default";
+"Đơn cách" = "Monospaced";
+"Bo tròn" = "Rounded";
+"Có chân" = "Serif";

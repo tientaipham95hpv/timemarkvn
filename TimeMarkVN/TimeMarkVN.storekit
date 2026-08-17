@@ -1,0 +1,155 @@
+{
+  "identifier" : "E2B7EA86",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayVersion" : 1,
+      "familyShareable" : false,
+      "internalID" : "33A78A9C",
+      "localizations" : [
+        {
+          "description" : "Trọn đời chuyên nghiệp",
+          "displayName" : "TimeMark Pro Lifetime",
+          "locale" : "vi"
+        },
+        {
+          "description" : "Lifetime professional access",
+          "displayName" : "TimeMark Pro Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.timemarkvn.pro.lifetime",
+      "referenceName" : "Pro Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "vi",
+    "_storefront" : "VNM",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "7E4C4B59",
+      "localizations" : [
+
+      ],
+      "name" : "Pro Subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayVersion" : 1,
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "8F6A321E",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Đăng ký theo tháng",
+              "displayName" : "TimeMark Pro Monthly",
+              "locale" : "vi"
+            },
+            {
+              "description" : "Monthly subscription",
+              "displayName" : "TimeMark Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.timemarkvn.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Pro Monthly",
+          "subscriptionGroupID" : "7E4C4B59",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayVersion" : 1,
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "9A7F314C",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Đăng ký theo năm",
+              "displayName" : "TimeMark Pro Yearly",
+              "locale" : "vi"
+            },
+            {
+              "description" : "Yearly subscription",
+              "displayName" : "TimeMark Pro Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.timemarkvn.pro.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pro Yearly",
+          "subscriptionGroupID" : "7E4C4B59",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

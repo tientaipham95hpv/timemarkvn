@@ -47,6 +47,7 @@ struct StampStyle: Codable, Equatable {
     var accentHex = "#FFD400"
     var useCustomAddress = false
     var customAddress = ""
+    var fontDesign = "default"
 
     func isEnabled(_ field: StampField) -> Bool { enabled[field] ?? false }
 }
@@ -127,5 +128,20 @@ final class StampStore: ObservableObject {
     func loadLogo(_ image: UIImage?) {
         logo = image
         style.enabled[.logo] = image != nil
+    }
+}
+
+import SwiftUI
+
+extension Font {
+    static func customFont(size: CGFloat, weight: Font.Weight = .semibold, designName: String) -> Font {
+        let design: Font.Design
+        switch designName {
+        case "monospaced": design = .monospaced
+        case "rounded": design = .rounded
+        case "serif": design = .serif
+        default: design = .default
+        }
+        return Font.system(size: size, weight: weight, design: design)
     }
 }

@@ -39,7 +39,20 @@ enum StampRenderer {
 
             let lineSpacing: CGFloat = 8
             let fontSize = style.fontSize * 1.5 // Scaling font size for output resolution
-            let font = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
+            
+            var fontDescriptor = UIFont.systemFont(ofSize: fontSize, weight: .semibold).fontDescriptor
+            switch style.fontDesign {
+            case "monospaced":
+                fontDescriptor = fontDescriptor.withDesign(.monospaced) ?? fontDescriptor
+            case "rounded":
+                fontDescriptor = fontDescriptor.withDesign(.rounded) ?? fontDescriptor
+            case "serif":
+                fontDescriptor = fontDescriptor.withDesign(.serif) ?? fontDescriptor
+            default:
+                fontDescriptor = fontDescriptor.withDesign(.default) ?? fontDescriptor
+            }
+            let font = UIFont(descriptor: fontDescriptor, size: fontSize)
+            
             let singleLineHeight = "Test".size(withAttributes: [.font: font]).height
             
             let totalTextHeight = CGFloat(lines.count) * singleLineHeight + CGFloat(max(0, lines.count - 1)) * lineSpacing

@@ -1,10 +1,13 @@
 import SwiftUI
+import StoreKit
 
 struct CameraView: View {
     @EnvironmentObject var location: LocationManager
     @EnvironmentObject var stamp: StampStore
     @EnvironmentObject var store: ProStore
     @StateObject private var camera = CameraModel()
+    
+    @Environment(\.requestReview) var requestReview
 
     @State private var lastImage: UIImage?
     @State private var editor = false
@@ -16,6 +19,19 @@ struct CameraView: View {
     private func triggerHaptic() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+    }
+    
+    private func triggerAppReview() {
+        let key = "TimeMarkVN_CapturedCount"
+        let currentCount = UserDefaults.standard.integer(forKey: key)
+        let nextCount = currentCount + 1
+        UserDefaults.standard.set(nextCount, forKey: key)
+        
+        if nextCount == 5 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                requestReview()
+            }
+        }
     }
 
     var body: some View {
@@ -230,24 +246,24 @@ struct CameraView: View {
                 let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
                 let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address
                 Label(tag + addr, systemImage: "location.fill")
-                    .font(.headline)
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.date) {
                 Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
-                    .font(.subheadline.bold())
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
                     .foregroundStyle(Color(hex: stamp.style.accentHex))
             }
             if stamp.style.isEnabled(.gps), let c = location.coordinate {
                 Text(String(format: "%.6f° N  %.6f° E", c.latitude, c.longitude))
-                    .font(.system(.caption, design: .monospaced))
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.weather) {
                 Text("☁️ \(location.temperature) • \(location.weatherText)")
-                    .font(.caption)
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.altitude) {
                 Text(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
-                    .font(.caption)
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
         }
         .foregroundStyle(.white)
@@ -268,6 +284,7 @@ struct CameraView: View {
                                               style: stamp.style, logo: stamp.logo, map: map)
             lastImage = final
             UIImageWriteToSavedPhotosAlbum(final, nil, nil, nil)
+            triggerAppReview()
         }
 
         if stamp.style.isEnabled(.map), let c = location.coordinate {

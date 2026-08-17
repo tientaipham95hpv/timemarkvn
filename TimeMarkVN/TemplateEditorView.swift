@@ -75,24 +75,24 @@ struct TemplateEditorView: View {
                                 let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
                                 let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress
                                 Label(tag + addr, systemImage: "location.fill")
-                                    .font(.system(size: CGFloat(stamp.style.fontSize * 0.7)))
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
                             }
                             if stamp.style.isEnabled(.date) {
                                 Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
-                                    .font(.system(size: CGFloat(stamp.style.fontSize * 0.65)).bold())
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
                                     .foregroundStyle(Color(hex: stamp.style.accentHex))
                             }
                             if stamp.style.isEnabled(.gps) {
                                 Text(sampleCoordinate)
-                                    .font(.system(size: CGFloat(stamp.style.fontSize * 0.55), design: .monospaced))
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
                             }
                             if stamp.style.isEnabled(.weather) {
                                 Text("☁️ 28°C • Trời có mây")
-                                    .font(.system(size: CGFloat(stamp.style.fontSize * 0.55)))
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
                             }
                             if stamp.style.isEnabled(.altitude) {
                                 Text("Độ cao: 12 m")
-                                    .font(.system(size: CGFloat(stamp.style.fontSize * 0.55)))
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
                             }
                         }
                         .foregroundStyle(.white)
@@ -221,6 +221,31 @@ struct TemplateEditorView: View {
                                         .padding(.all, 14)
                                         .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
                                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                                
+                                // Font Selector Card
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text(NSLocalizedString("KIỂU CHỮ", comment: ""))
+                                        .font(.system(.caption, design: .monospaced).bold())
+                                        .foregroundStyle(.white.opacity(0.4))
+                                        .tracking(1.5)
+                                    
+                                    Picker(NSLocalizedString("Kiểu chữ chữ ký", comment: ""), selection: $stamp.style.fontDesign) {
+                                        Text(NSLocalizedString("Mặc định", comment: "")).tag("default")
+                                        Text(NSLocalizedString("Đơn cách", comment: "")).tag("monospaced")
+                                        Text(NSLocalizedString("Bo tròn", comment: "")).tag("rounded")
+                                        Text(NSLocalizedString("Có chân", comment: "")).tag("serif")
+                                    }
+                                    .pickerStyle(.menu)
+                                    .font(.body.bold())
+                                    .foregroundStyle(.white)
+                                    .padding(.all, 8)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
                                 }
                                 .padding(.all, 16)
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
