@@ -20,11 +20,11 @@ targets:
     deploymentTarget: $(echo "$DEPLOYMENT")
     sources:
       - path: TimeMarkVN
-    entitlements: TimeMarkVN/TimeMarkVN.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(echo "$BUNDLE")
         INFOPLIST_FILE: TimeMarkVN/Info.plist
+        CODE_SIGN_ENTITLEMENTS: TimeMarkVN/TimeMarkVN.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MACCATALYST: false
