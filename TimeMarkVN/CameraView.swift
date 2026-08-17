@@ -264,29 +264,46 @@ struct CameraView: View {
         .sheet(isPresented: $showPaywall) { ProPaywallView() }
     }
 
-    private var stampPreview: some View {
+    private var stampPreviewContent: some View {
         VStack(alignment: .leading, spacing: 5) {
             if stamp.style.isEnabled(.address) {
                 let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
                 let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address
-                Label(tag + addr, systemImage: "location.fill")
+                let offlineTag = location.isOffline ? " [Offline]" : ""
+                Label(tag + addr + offlineTag, systemImage: "location.fill")
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.date) {
-                Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
-                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
-                    .foregroundStyle(Color(hex: stamp.style.accentHex))
+                if location.isTimeSpoofed {
+                    let displayDate = location.gpsTimestamp ?? Date()
+                    Text(displayDate, format: .dateTime.day().month().year().hour().minute().second())
+                        .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
+                        .foregroundStyle(Color(hex: stamp.style.accentHex))
+                        + Text(" [⚠️ " + NSLocalizedString("Giờ vệ tinh", comment: "") + "]").font(.caption.bold()).foregroundColor(.red)
+                } else {
+                    Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
+                        .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
+                        .foregroundStyle(Color(hex: stamp.style.accentHex))
+                }
             }
             if stamp.style.isEnabled(.gps), let c = location.coordinate {
-                Text(String(format: "%.6f° N  %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy))
-                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+                HStack(spacing: 4) {
+                    Text(String(format: "%.6f° N  %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy))
+                        .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+                    if location.isGpsSimulated {
+                        Text("[⚠️ " + NSLocalizedString("Giả lập", comment: "") + "]")
+                            .font(.caption.bold())
+                            .foregroundColor(.red)
+                    }
+                }
             }
             if stamp.style.isEnabled(.compass) {
                 Text(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), location.heading, location.heading.cardinalDirection))
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.weather) {
-                Text("☁️ \(location.temperature) • \(location.weatherText)")
+                let offlineText = location.isOffline ? " [Offline]" : ""
+                Text("☁️ \(location.temperature) • \(location.weatherText)\(offlineText)")
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.altitude) {
@@ -305,16 +322,96 @@ struct CameraView: View {
                 }
             }
         }
-        .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(.black.opacity(stamp.style.opacity),
-                    in: RoundedRectangle(cornerRadius: stamp.style.cornerRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: stamp.style.cornerRadius)
-                .stroke(.white.opacity(0.1), lineWidth: 1)
-        )
-        .padding(.horizontal, 20)
+    }
+
+    private func getJoinedTelemetry() -> String {
+        var items: [String] = []
+        let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
+        let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address
+        let offlineTag = location.isOffline ? " [Offline]" : ""
+        
+        if stamp.style.isEnabled(.address) { items.append("📍 " + tag + addr + offlineTag) }
+        if stamp.style.isEnabled(.date) {
+            let displayDate = (location.isTimeSpoofed && location.gpsTimestamp != nil) ? location.gpsTimestamp! : Date()
+            let dateStr = DateFormatter.localizedString(from: displayDate, dateStyle: .medium, timeStyle: .medium)
+            items.append(dateStr + (location.isTimeSpoofed ? " [⚠️ Giờ vệ tinh]" : ""))
+        }
+        if stamp.style.isEnabled(.gps), let c = location.coordinate {
+            items.append(String(format: "%.6f° N  %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy) + (location.isGpsSimulated ? " [⚠️ Giả lập]" : ""))
+        }
+        if stamp.style.isEnabled(.custom) {
+            items.append(stamp.style.customText)
+            for f in stamp.style.customFields {
+                if !f.isEmpty { items.append(f) }
+            }
+        }
+        return items.joined(separator: "  •  ")
+    }
+
+    private var stampPreview: some View {
+        Group {
+            if stamp.style.layoutType == "minimalist" {
+                Text(getJoinedTelemetry())
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.6), weight: .bold, designName: stamp.style.fontDesign))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.8), radius: 2, x: 1, y: 1)
+                    .padding(.horizontal, 24)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else if stamp.style.layoutType == "badge" {
+                VStack(spacing: 4) {
+                    Circle()
+                        .fill(.black.opacity(stamp.style.opacity))
+                        .frame(width: 140, height: 140)
+                        .overlay(
+                            Circle()
+                                .stroke(Color(hex: stamp.style.accentHex), lineWidth: 3)
+                        )
+                        .overlay(
+                            VStack(spacing: 2) {
+                                if stamp.style.isEnabled(.address) {
+                                    Text(location.isOffline ? "Offline" : "📍 TimeMark")
+                                        .font(.system(size: 8, weight: .bold))
+                                }
+                                if stamp.style.isEnabled(.date) {
+                                    Text(Date(), format: .dateTime.hour().minute().second())
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(Color(hex: stamp.style.accentHex))
+                                }
+                                if stamp.style.isEnabled(.gps), let c = location.coordinate {
+                                    Text(String(format: "%.3f, %.3f", c.latitude, c.longitude))
+                                        .font(.system(size: 8, weight: .bold))
+                                    if location.isGpsSimulated {
+                                        Text("⚠️ FAKE")
+                                            .font(.system(size: 7, weight: .bold))
+                                            .foregroundColor(.red)
+                                    }
+                                }
+                                if stamp.style.isEnabled(.custom) {
+                                    Text(stamp.style.customText)
+                                        .font(.system(size: 9, weight: .bold))
+                                        .lineLimit(1)
+                                }
+                            }
+                            .foregroundStyle(.white)
+                            .padding(8)
+                        )
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.trailing, 20)
+            } else {
+                stampPreviewContent
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(.black.opacity(stamp.style.opacity),
+                                in: RoundedRectangle(cornerRadius: stamp.style.cornerRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: stamp.style.cornerRadius)
+                            .stroke(.white.opacity(0.1), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 20)
+            }
+        }
     }
 
     private func process(_ raw: UIImage) {

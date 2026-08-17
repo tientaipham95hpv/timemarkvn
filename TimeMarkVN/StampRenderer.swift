@@ -2,7 +2,7 @@ import UIKit
 
 enum StampRenderer {
     static func render(image: UIImage,
-                       location: LocationManager,
+                       location: TelemetryData,
                        style: StampStyle,
                        logo: UIImage?,
                        map: UIImage?) -> UIImage {
@@ -48,12 +48,26 @@ enum StampRenderer {
             let addr = style.useCustomAddress ? (style.customAddress.isEmpty ? location.address : style.customAddress) : location.address
             let tag = style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
             
-            if style.isEnabled(.address) { lines.append("📍 " + tag + addr) }
+            if style.isEnabled(.address) {
+                let offlineTag = location.isOffline ? " [Offline]" : ""
+                lines.append("📍 " + tag + addr + offlineTag)
+            }
             if style.isEnabled(.date) {
-                lines.append(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium))
+                if location.isTimeSpoofed {
+                    let displayDate = location.gpsTimestamp ?? Date()
+                    let dateStr = DateFormatter.localizedString(from: displayDate, dateStyle: .medium, timeStyle: .medium)
+                    lines.append(dateStr + " [⚠️ " + NSLocalizedString("Giờ vệ tinh", comment: "") + "]")
+                } else {
+                    lines.append(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium))
+                }
             }
             if style.isEnabled(.gps), let c = location.coordinate {
-                lines.append(String(format: "%.6f° N   %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy))
+                let gpsStr = String(format: "%.6f° N   %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy)
+                if location.isGpsSimulated {
+                    lines.append(gpsStr + " [⚠️ " + NSLocalizedString("Giả lập", comment: "") + "]")
+                } else {
+                    lines.append(gpsStr)
+                }
             }
             if style.isEnabled(.altitude) {
                 lines.append(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
@@ -62,7 +76,8 @@ enum StampRenderer {
                 lines.append(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), location.heading, location.heading.cardinalDirection))
             }
             if style.isEnabled(.weather) {
-                lines.append("☁️ \(location.temperature) • \(location.weatherText)")
+                let offlineText = location.isOffline ? " [Offline]" : ""
+                lines.append("☁️ \(location.temperature) • \(location.weatherText)\(offlineText)")
             }
             if style.isEnabled(.custom) {
                 lines.append(style.customText)
@@ -91,34 +106,86 @@ enum StampRenderer {
             
             let singleLineHeight = "Test".size(withAttributes: [.font: font]).height
             
-            let totalTextHeight = CGFloat(lines.count) * singleLineHeight + CGFloat(max(0, lines.count - 1)) * lineSpacing
-            let boxPaddingY: CGFloat = 24
-            let boxPaddingX: CGFloat = 28
-            
-            let boxW = w * 0.90
-            let boxH = totalTextHeight + boxPaddingY * 2
-            let x = (w - boxW) / 2
-            let y = max(20, h * style.y - boxH / 2)
-            let box = CGRect(x: x, y: y, width: boxW, height: boxH)
-
-            // Draw stamp background card
-            UIColor.black.withAlphaComponent(style.opacity).setFill()
-            UIBezierPath(roundedRect: box, cornerRadius: CGFloat(style.cornerRadius * 1.5)).fill()
-
-            // Draw lines sequentially
-            let textInsetBox = box.insetBy(dx: boxPaddingX, dy: boxPaddingY)
-            var currentY = textInsetBox.minY
             let accentColor = UIColor(hex: style.accentHex) ?? UIColor.yellow
-            
-            for line in lines {
-                let isAccent = line.contains(":") || line == style.customText
+
+            if style.layoutType == "minimalist" {
+                let joinedText = lines.joined(separator: "   •   ")
                 let attrs: [NSAttributedString.Key: Any] = [
                     .font: font,
-                    .foregroundColor: isAccent ? accentColor : UIColor.white
+                    .foregroundColor: UIColor.white
                 ]
-                let size = line.size(withAttributes: attrs)
-                line.draw(in: CGRect(x: textInsetBox.minX, y: currentY, width: textInsetBox.width - 150, height: size.height), withAttributes: attrs)
-                currentY += size.height + lineSpacing
+                let textSize = joinedText.size(withAttributes: attrs)
+                let drawX = (w - textSize.width) / 2
+                let drawY = max(20, h * style.y - textSize.height / 2)
+                let drawRect = CGRect(x: drawX, y: drawY, width: textSize.width, height: textSize.height)
+                
+                let shadowAttrs: [NSAttributedString.Key: Any] = [
+                    .font: font,
+                    .foregroundColor: UIColor.black.withAlphaComponent(0.6)
+                ]
+                joinedText.draw(in: drawRect.offsetBy(dx: 2, dy: 2), withAttributes: shadowAttrs)
+                joinedText.draw(in: drawRect, withAttributes: attrs)
+                
+            } else if style.layoutType == "badge" {
+                let badgeSize: CGFloat = min(w * 0.35, 360)
+                let bx = w - badgeSize - 40
+                let by = h - badgeSize - 40
+                let badgeBox = CGRect(x: bx, y: by, width: badgeSize, height: badgeSize)
+                
+                UIColor.black.withAlphaComponent(style.opacity).setFill()
+                UIBezierPath(ovalIn: badgeBox).fill()
+                
+                accentColor.setStroke()
+                let borderPath = UIBezierPath(ovalIn: badgeBox.insetBy(dx: 6, dy: 6))
+                borderPath.lineWidth = 4
+                borderPath.stroke()
+                
+                let badgeFont = UIFont(descriptor: fontDescriptor, size: fontSize * 0.72)
+                let badgeLineHeight = "Test".size(withAttributes: [.font: badgeFont]).height
+                let innerContentHeight = CGFloat(min(lines.count, 4)) * badgeLineHeight + CGFloat(max(0, min(lines.count, 4) - 1)) * 4
+                
+                var currentY = badgeBox.midY - innerContentHeight / 2
+                for (i, line) in lines.prefix(4).enumerated() {
+                    let isAccent = line.contains(":") || line == style.customText
+                    let lineAttrs: [NSAttributedString.Key: Any] = [
+                        .font: badgeFont,
+                        .foregroundColor: isAccent ? accentColor : .white
+                    ]
+                    let size = line.size(withAttributes: lineAttrs)
+                    let lineX = badgeBox.midX - min(size.width, badgeSize - 24) / 2
+                    let lineRect = CGRect(x: lineX, y: currentY, width: min(size.width, badgeSize - 24), height: badgeLineHeight)
+                    
+                    line.draw(in: lineRect, withAttributes: lineAttrs)
+                    currentY += badgeLineHeight + 4
+                }
+                
+            } else {
+                let totalTextHeight = CGFloat(lines.count) * singleLineHeight + CGFloat(max(0, lines.count - 1)) * lineSpacing
+                let boxPaddingY: CGFloat = 24
+                let boxPaddingX: CGFloat = 28
+                
+                let boxW = w * 0.90
+                let boxH = totalTextHeight + boxPaddingY * 2
+                let x = (w - boxW) / 2
+                let y = max(20, h * style.y - boxH / 2)
+                let box = CGRect(x: x, y: y, width: boxW, height: boxH)
+
+                UIColor.black.withAlphaComponent(style.opacity).setFill()
+                UIBezierPath(roundedRect: box, cornerRadius: CGFloat(style.cornerRadius * 1.5)).fill()
+
+                let textInsetBox = box.insetBy(dx: boxPaddingX, dy: boxPaddingY)
+                var currentY = textInsetBox.minY
+                
+                for line in lines {
+                    let isAccent = line.contains(":") || line == style.customText
+                    let attrs: [NSAttributedString.Key: Any] = [
+                        .font: font,
+                        .foregroundColor: isAccent ? accentColor : UIColor.white
+                    ]
+                    let size = line.size(withAttributes: attrs)
+                    line.draw(in: CGRect(x: textInsetBox.minX, y: currentY, width: textInsetBox.width - (style.isEnabled(.map) ? 150 : 0), height: size.height), withAttributes: attrs)
+                    currentY += size.height + lineSpacing
+                }
             }
 
             // Draw map preview if active

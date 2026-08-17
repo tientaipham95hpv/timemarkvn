@@ -11,5 +11,9 @@
     <string>TimeMark VN cần thư viện ảnh để chọn ảnh và logo.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>TimeMark VN cần quyền lưu ảnh đã đóng dấu.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>TimeMark VN cần micro để ghi chú giọng nói thành chữ.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>TimeMark VN cần nhận dạng giọng nói để chuyển thành văn bản.</string>
 </dict>
 </plist>

@@ -150,6 +150,21 @@ struct BatchExportView: View {
         assets = list
     }
 
+    private func getAddress(for location: CLLocation?, completion: @escaping (String) -> Void) {
+        guard let location = location else {
+            completion(NSLocalizedString("Không có vị trí", comment: ""))
+            return
+        }
+        CLGeocoder().reverseGeocodeLocation(location) { places, _ in
+            if let p = places?.first {
+                let parts = [p.name, p.subLocality, p.locality, p.administrativeArea].compactMap { $0 }
+                completion(parts.joined(separator: ", "))
+            } else {
+                completion(String(format: "%.6f, %.6f", location.coordinate.latitude, location.coordinate.longitude))
+            }
+        }
+    }
+
     private func export() {
         guard store.isPro else {
             message = NSLocalizedString("Batch Export là tính năng Pro.", comment: "")
@@ -163,29 +178,74 @@ struct BatchExportView: View {
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
 
-        let group = DispatchGroup()
-        var images: [UIImage] = []
-
-        for asset in targets {
-            group.enter()
+        var index = 0
+        
+        func processNext() {
+            guard index < targets.count else {
+                DispatchQueue.main.async {
+                    self.exporting = false
+                    self.message = String(format: NSLocalizedString("Đã đóng dấu thành công %d ảnh vào Thư viện.", comment: ""), targets.count)
+                }
+                return
+            }
+            
+            let asset = targets[index]
+            
             PHImageManager.default().requestImage(
                 for: asset, targetSize: PHImageManagerMaximumSize,
                 contentMode: .aspectFit, options: options
             ) { image, _ in
-                if let image { images.append(image) }
-                group.leave()
+                guard let image = image else {
+                    index += 1
+                    processNext()
+                    return
+                }
+                
+                let assetLoc = asset.location
+                let assetDate = asset.creationDate ?? assetLoc?.timestamp ?? Date()
+                
+                self.getAddress(for: assetLoc) { address in
+                    let telemetry = EXIFTelemetry(
+                        coordinate: assetLoc?.coordinate,
+                        address: address,
+                        altitude: assetLoc?.altitude ?? 0,
+                        gpsTimestamp: assetDate
+                    )
+                    
+                    let stamped = StampRenderer.render(
+                        image: image,
+                        location: telemetry,
+                        style: self.stamp.style,
+                        logo: self.stamp.logo,
+                        map: nil
+                    )
+                    
+                    UIImageWriteToSavedPhotosAlbum(stamped, nil, nil, nil)
+                    
+                    DispatchQueue.main.async {
+                        self.progress = Double(index + 1) / Double(targets.count)
+                        index += 1
+                        processNext()
+                    }
+                }
             }
         }
-
-        group.notify(queue: .main) {
-            for (index, image) in images.enumerated() {
-                let stamped = StampRenderer.render(image: image, location: location,
-                                                    style: stamp.style, logo: stamp.logo, map: nil)
-                UIImageWriteToSavedPhotosAlbum(stamped, nil, nil, nil)
-                progress = Double(index + 1) / Double(max(images.count, 1))
-            }
-            exporting = false
-            message = String(format: NSLocalizedString("Đã đóng dấu thành công %d ảnh vào Thư viện.", comment: ""), images.count)
-        }
+        
+        processNext()
     }
+}
+
+struct EXIFTelemetry: TelemetryData {
+    var coordinate: CLLocationCoordinate2D?
+    var address: String
+    var altitude: Double
+    var heading: Double = 0
+    var accuracy: Double = 0
+    var temperature: String = "--°C"
+    var weatherText: String = ""
+    var isTimeSpoofed: Bool = false
+    var isGpsSimulated: Bool = false
+    var gpsTimestamp: Date?
+    var isOffline: Bool = false
+}
 }

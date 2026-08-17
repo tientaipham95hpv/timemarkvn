@@ -1,5 +1,7 @@
 import SwiftUI
 import PhotosUI
+import Speech
+import AVFoundation
 
 struct TemplateEditorView: View {
     @Environment(\.dismiss) private var dismiss
@@ -9,6 +11,8 @@ struct TemplateEditorView: View {
     @State private var templateName = ""
     @State private var showName = false
     @State private var paywall = false
+    
+    @StateObject private var speechHelper = SpeechRecognizerHelper()
     
     @State private var activeTab = 0 // 0: Nội dung, 1: Kiểu dáng, 2: Mẫu & Logo
     
@@ -22,6 +26,71 @@ struct TemplateEditorView: View {
     // Sample mock location for preview
     private let sampleAddress = "12 P. Tôn Thất Tùng, Trung Tự, Đống Đa, Hà Nội"
     private let sampleCoordinate = "21.004832° N  105.828456° E"
+
+    private func getJoinedTelemetry() -> String {
+        var items: [String] = []
+        let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
+        let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress
+        
+        if stamp.style.isEnabled(.address) { items.append("📍 " + tag + addr) }
+        if stamp.style.isEnabled(.date) {
+            let dateStr = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium)
+            items.append(dateStr)
+        }
+        if stamp.style.isEnabled(.gps) {
+            items.append(sampleCoordinate + " (±3.5m)")
+        }
+        if stamp.style.isEnabled(.custom) {
+            items.append(stamp.style.customText)
+            for f in stamp.style.customFields {
+                if !f.isEmpty { items.append(f) }
+            }
+        }
+        return items.joined(separator: "  •  ")
+    }
+
+    private var stampPreviewContent: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if stamp.style.isEnabled(.address) {
+                let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
+                let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress
+                Label(tag + addr, systemImage: "location.fill")
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.date) {
+                Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
+                    .foregroundStyle(Color(hex: stamp.style.accentHex))
+            }
+            if stamp.style.isEnabled(.gps) {
+                Text(sampleCoordinate + " (±3.5m)")
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.compass) {
+                Text(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), 120.0, 120.0.cardinalDirection))
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.weather) {
+                Text("☁️ 28°C • Trời có mây")
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.altitude) {
+                Text("Độ cao: 12 m")
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.custom) {
+                Text(stamp.style.customText)
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .semibold, designName: stamp.style.fontDesign))
+                
+                ForEach(stamp.style.customFields, id: \.self) { field in
+                    if !field.isEmpty {
+                        Text(field)
+                            .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .semibold, designName: stamp.style.fontDesign))
+                    }
+                }
+            }
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -93,43 +162,63 @@ struct TemplateEditorView: View {
                             .clipped()
                         }
                         
-                        // Watermark preview overlay
-                        VStack(alignment: .leading, spacing: 4) {
-                            if stamp.style.isEnabled(.address) {
-                                let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
-                                let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress
-                                Label(tag + addr, systemImage: "location.fill")
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
-                            }
-                            if stamp.style.isEnabled(.date) {
-                                Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
-                                    .foregroundStyle(Color(hex: stamp.style.accentHex))
-                            }
-                            if stamp.style.isEnabled(.gps) {
-                                Text(sampleCoordinate + " (±3.5m)")
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
-                            }
-                            if stamp.style.isEnabled(.compass) {
-                                Text(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), 120.0, 120.0.cardinalDirection))
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
-                            }
-                            if stamp.style.isEnabled(.weather) {
-                                Text("☁️ 28°C • Trời có mây")
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
-                            }
-                            if stamp.style.isEnabled(.altitude) {
-                                Text("Độ cao: 12 m")
-                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+                        // Watermark preview overlay (Restructured with Dynamic Layouts)
+                        Group {
+                            if stamp.style.layoutType == "minimalist" {
+                                Text(getJoinedTelemetry())
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.45), weight: .bold, designName: stamp.style.fontDesign))
+                                    .foregroundStyle(.white)
+                                    .shadow(color: .black.opacity(0.8), radius: 1, x: 0.5, y: 0.5)
+                                    .padding(.horizontal, 16)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            } else if stamp.style.layoutType == "badge" {
+                                VStack(spacing: 2) {
+                                    Circle()
+                                        .fill(.black.opacity(stamp.style.opacity))
+                                        .frame(width: 80, height: 80)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color(hex: stamp.style.accentHex), lineWidth: 2)
+                                        )
+                                        .overlay(
+                                            VStack(spacing: 1) {
+                                                if stamp.style.isEnabled(.address) {
+                                                    Text("📍 TimeMark")
+                                                        .font(.system(size: 5, weight: .bold))
+                                                }
+                                                if stamp.style.isEnabled(.date) {
+                                                    Text(Date(), format: .dateTime.hour().minute().second())
+                                                        .font(.system(size: 6, weight: .bold))
+                                                        .foregroundStyle(Color(hex: stamp.style.accentHex))
+                                                }
+                                                if stamp.style.isEnabled(.gps) {
+                                                    Text("21.004, 105.828")
+                                                        .font(.system(size: 5, weight: .bold))
+                                                }
+                                                if stamp.style.isEnabled(.custom) {
+                                                    Text(stamp.style.customText)
+                                                        .font(.system(size: 6, weight: .bold))
+                                                        .lineLimit(1)
+                                                }
+                                            }
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                        )
+                                }
+                                .scaleEffect(0.9)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.trailing, 16)
+                            } else {
+                                stampPreviewContent
+                                    .foregroundStyle(.white)
+                                    .padding(10)
+                                    .background(.black.opacity(stamp.style.opacity),
+                                                in: RoundedRectangle(cornerRadius: stamp.style.cornerRadius * 0.8))
+                                    .scaleEffect(0.8)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 12)
                             }
                         }
-                        .foregroundStyle(.white)
-                        .padding(14)
-                        .background(.black.opacity(stamp.style.opacity),
-                                    in: RoundedRectangle(cornerRadius: stamp.style.cornerRadius))
-                        .scaleEffect(0.9)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 16)
                     }
                     .padding(.horizontal, 20)
                 }
@@ -225,12 +314,33 @@ struct TemplateEditorView: View {
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    TextField(NSLocalizedString("Dòng 1...", comment: ""), text: $stamp.style.customText)
-                                        .font(.body)
-                                        .foregroundStyle(.white)
-                                        .padding(.all, 12)
-                                        .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
-                                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.12), lineWidth: 1))
+                                    HStack {
+                                        TextField(NSLocalizedString("Dòng 1...", comment: ""), text: $stamp.style.customText)
+                                            .font(.body)
+                                            .foregroundStyle(.white)
+                                        
+                                        Button {
+                                            if speechHelper.isRecording {
+                                                speechHelper.stop()
+                                            } else {
+                                                speechHelper.start()
+                                            }
+                                        } label: {
+                                            Image(systemName: speechHelper.isRecording ? "mic.fill" : "mic")
+                                                .foregroundStyle(speechHelper.isRecording ? .red : .yellow)
+                                                .font(.title3)
+                                                .scaleEffect(speechHelper.isRecording ? 1.2 : 1.0)
+                                                .animation(.easeInOut(duration: 0.3), value: speechHelper.isRecording)
+                                        }
+                                    }
+                                    .padding(.all, 12)
+                                    .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.12), lineWidth: 1))
+                                    .onChange(of: speechHelper.transcript) { newVal in
+                                        if !newVal.isEmpty {
+                                            stamp.style.customText = newVal
+                                        }
+                                    }
                                     
                                     // Pro custom lines
                                     ForEach(0..<2, id: \.self) { index in
@@ -267,6 +377,24 @@ struct TemplateEditorView: View {
                                         .background(.white.opacity(store.isPro ? 0.04 : 0.02), in: RoundedRectangle(cornerRadius: 10))
                                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.isPro ? .white.opacity(0.12) : .white.opacity(0.06), lineWidth: 1))
                                     }
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                                
+                                // Layout Selector Card
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text(NSLocalizedString("BỐ CỤC CHỮ KÝ", comment: ""))
+                                        .font(.system(.caption, design: .monospaced).bold())
+                                        .foregroundStyle(.white.opacity(0.4))
+                                        .tracking(1.5)
+                                    
+                                    Picker(NSLocalizedString("Bố cục chữ ký", comment: ""), selection: $stamp.style.layoutType) {
+                                        Text(NSLocalizedString("Cổ điển", comment: "")).tag("classic")
+                                        Text(NSLocalizedString("Tối giản", comment: "")).tag("minimalist")
+                                        Text(NSLocalizedString("Huy hiệu", comment: "")).tag("badge")
+                                    }
+                                    .pickerStyle(.segmented)
                                 }
                                 .padding(.all, 16)
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
@@ -646,5 +774,74 @@ extension Color {
         uic.getRed(&r, green: &g, blue: &b, alpha: &a)
         let rgb: Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255) << 0
         return String(format: "#%06x", rgb)
+    }
+}
+
+class SpeechRecognizerHelper: ObservableObject {
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "vi-VN"))
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private let audioEngine = AVAudioEngine()
+    
+    @Published var transcript = ""
+    @Published var isRecording = false
+    
+    func start() {
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+            if authStatus == .authorized {
+                DispatchQueue.main.async {
+                    self.startRecording()
+                }
+            }
+        }
+    }
+    
+    private func startRecording() {
+        recognitionTask?.cancel()
+        self.recognitionTask = nil
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try? audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        
+        let inputNode = audioEngine.inputNode
+        guard let recognitionRequest = recognitionRequest else { return }
+        recognitionRequest.shouldReportPartialResults = true
+        
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
+            var isFinal = false
+            if let result = result {
+                DispatchQueue.main.async {
+                    self.transcript = result.bestTranscription.formattedString
+                }
+                isFinal = result.isFinal
+            }
+            if error != nil || isFinal {
+                self.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+                DispatchQueue.main.async {
+                    self.isRecording = false
+                }
+            }
+        }
+        
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        try? audioEngine.start()
+        isRecording = true
+    }
+    
+    func stop() {
+        audioEngine.stop()
+        recognitionRequest?.endAudio()
+        isRecording = false
     }
 }

@@ -50,6 +50,7 @@ struct StampStyle: Codable, Equatable {
     var fontDesign = "default"
     var isTiled = false
     var customFields: [String] = []
+    var layoutType = "classic"
 
     func isEnabled(_ field: StampField) -> Bool { enabled[field] ?? false }
 }
