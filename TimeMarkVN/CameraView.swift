@@ -415,3 +415,33 @@ struct ProPaywallView: View {
         }
     }
 }
+
+struct FeatureRow: View {
+    let icon: String
+    let title: String
+    let desc: String
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.yellow)
+                .frame(width: 44, height: 44)
+                .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.08), lineWidth: 1))
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                Text(desc)
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.5))
+            }
+            Spacer()
+        }
+        .padding(.all, 12)
+        .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.05), lineWidth: 1))
+    }
+}

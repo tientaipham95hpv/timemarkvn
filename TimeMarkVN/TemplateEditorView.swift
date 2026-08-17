@@ -336,3 +336,76 @@ struct TemplateEditorView: View {
         }
     }
 }
+
+// Subview Component for Custom Segmented Tab
+struct TabButton: View {
+    let title: String
+    let icon: String
+    let isActive: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.subheadline)
+                Text(title)
+                    .font(.system(size: 11, weight: .bold))
+            }
+            .foregroundStyle(isActive ? .black : .white.opacity(0.6))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .background(isActive ? Color.yellow : Color.clear, in: RoundedRectangle(cornerRadius: 10))
+            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isActive)
+        }
+    }
+}
+
+// Subview Component for Sliders
+struct CustomSliderRow: View {
+    let title: String
+    @Binding var val: Double
+    let range: ClosedRange<Double>
+    let symbol: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Label(title, systemImage: symbol)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.white)
+                Spacer()
+                Text(String(format: title.contains("suất") ? "%.0f%%" : "%.0f px", title.contains("suất") ? val * 100 : val))
+                    .font(.system(.subheadline, design: .monospaced))
+                    .foregroundStyle(.yellow)
+            }
+            
+            Slider(value: $val, in: range)
+                .tint(.yellow)
+        }
+    }
+}
+
+// Subview Component for Preset Buttons
+struct PresetButton: View {
+    let title: String
+    let icon: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.subheadline)
+                    .foregroundStyle(.yellow)
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.white)
+                Spacer()
+            }
+            .padding(.all, 14)
+            .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.1), lineWidth: 1))
+        }
+    }
+}
