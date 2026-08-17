@@ -13,8 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - name: Check Xcode
+        run: |
+          xcode-select -p
+          xcodebuild -version
 
       - name: Generate project
         run: bash ./generate_project.sh
