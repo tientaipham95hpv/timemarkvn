@@ -7,6 +7,8 @@ struct SettingsView: View {
 
     @State private var paywall = false
     @State private var batch = false
+    
+    @AppStorage("isBiometricLockEnabled") private var isBiometricLockEnabled = false
 
     var body: some View {
         ZStack {
@@ -124,6 +126,40 @@ struct SettingsView: View {
                             .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
                             .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
                         }
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // Security Card (Face ID)
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text(NSLocalizedString("BẢO MẬT", comment: "").uppercased())
+                            .font(.system(.caption, design: .monospaced).bold())
+                            .foregroundStyle(.white.opacity(0.4))
+                            .tracking(1.5)
+                        
+                        VStack(alignment: .leading, spacing: 16) {
+                            Toggle(isOn: $isBiometricLockEnabled) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "faceid")
+                                        .font(.headline)
+                                        .foregroundStyle(.yellow)
+                                        .frame(width: 36, height: 36)
+                                        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(NSLocalizedString("Khóa ứng dụng bằng Face ID", comment: ""))
+                                            .font(.body.bold())
+                                            .foregroundStyle(.white)
+                                        Text(NSLocalizedString("Yêu cầu Face ID khi khởi động ứng dụng", comment: ""))
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.5))
+                                    }
+                                }
+                            }
+                            .toggleStyle(SwitchToggleStyle(tint: .yellow))
+                        }
+                        .padding(.all, 16)
+                        .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
                     }
                     .padding(.horizontal, 20)
                     

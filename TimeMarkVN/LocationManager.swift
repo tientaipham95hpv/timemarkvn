@@ -1,5 +1,7 @@
 import CoreLocation
 import Network
+import ImageIO
+import Photos
 
 protocol TelemetryData {
     var coordinate: CLLocationCoordinate2D? { get }
@@ -93,6 +95,76 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         WeatherService.load(latitude: c.latitude, longitude: c.longitude) { [weak self] temp, text in
             self?.temperature = temp
             self?.weatherText = text
+        }
+    }
+
+    static func saveImageWithMetadata(image: UIImage, location: TelemetryData, completion: ((Bool) -> Void)? = nil) {
+        guard let data = image.jpegData(compressionQuality: 0.9) else {
+            completion?(false)
+            return
+        }
+        
+        var metadata = [
+            kCGImagePropertyTIFFDictionary as String: [AnyHashable: Any](),
+            kCGImagePropertyGPSDictionary as String: [AnyHashable: Any]()
+        ] as [String: Any]
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        if let tz = location.timeZone {
+            formatter.timeZone = tz
+        }
+        let dateStr = formatter.string(from: location.gpsTimestamp ?? Date())
+        metadata[kCGImagePropertyTIFFDictionary as String]?[kCGImagePropertyTIFFDateTime as String] = dateStr
+        
+        if let coord = location.coordinate {
+            var gpsDict = [AnyHashable: Any]()
+            gpsDict[kCGImagePropertyGPSLatitude as String] = abs(coord.latitude)
+            gpsDict[kCGImagePropertyGPSLatitudeRef as String] = coord.latitude >= 0 ? "N" : "S"
+            gpsDict[kCGImagePropertyGPSLongitude as String] = abs(coord.longitude)
+            gpsDict[kCGImagePropertyGPSLongitudeRef as String] = coord.longitude >= 0 ? "E" : "W"
+            gpsDict[kCGImagePropertyGPSAltitude as String] = abs(location.altitude)
+            gpsDict[kCGImagePropertyGPSAltitudeRef as String] = location.altitude >= 0 ? 0 : 1
+            
+            let gpsDateFormatter = DateFormatter()
+            gpsDateFormatter.dateFormat = "yyyy:MM:dd"
+            gpsDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+            let gpsTimeFormatter = DateFormatter()
+            gpsTimeFormatter.dateFormat = "HH:mm:ss.SS"
+            gpsTimeFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+            
+            let dateToUse = location.gpsTimestamp ?? Date()
+            gpsDict[kCGImagePropertyGPSDateStamp as String] = gpsDateFormatter.string(from: dateToUse)
+            gpsDict[kCGImagePropertyGPSTimeStamp as String] = gpsTimeFormatter.string(from: dateToUse)
+            
+            metadata[kCGImagePropertyGPSDictionary as String] = gpsDict
+        }
+        
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let type = CGImageSourceGetType(source) else {
+            completion?(false)
+            return
+        }
+        
+        let writeData = NSMutableData()
+        guard let destination = CGImageDestinationCreateWithData(writeData as CFMutableData, type, 1, nil) else {
+            completion?(false)
+            return
+        }
+        
+        CGImageDestinationAddImageFromSource(destination, source, 0, metadata as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else {
+            completion?(false)
+            return
+        }
+        
+        PHPhotoLibrary.shared().performChanges {
+            let creationRequest = PHAssetCreationRequest.forAsset()
+            creationRequest.addResource(with: .photo, data: writeData as Data, options: nil)
+        } completionHandler: { success, _ in
+            DispatchQueue.main.async {
+                completion?(success)
+            }
         }
     }
 }

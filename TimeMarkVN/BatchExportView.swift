@@ -221,7 +221,7 @@ struct BatchExportView: View {
                         map: nil
                     )
                     
-                    UIImageWriteToSavedPhotosAlbum(stamped, nil, nil, nil)
+                    LocationManager.saveImageWithMetadata(image: stamped, location: telemetry)
                     
                     DispatchQueue.main.async {
                         self.progress = Double(index + 1) / Double(targets.count)

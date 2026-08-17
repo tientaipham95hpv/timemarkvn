@@ -15,6 +15,36 @@ struct CameraView: View {
     @State private var share = false
     @State private var showPaywall = false
     @State private var showGrid = false
+    @State private var isPulseActive = false
+    
+    private var gpsAccuracyColor: Color {
+        if location.isOffline {
+            return .red
+        }
+        guard location.coordinate != nil else {
+            return .gray
+        }
+        let acc = location.accuracy
+        if acc <= 5 {
+            return .green
+        } else if acc <= 15 {
+            return .yellow
+        } else {
+            return .red
+        }
+    }
+    
+    private var gpsAccuracyText: String {
+        if location.isOffline {
+            return "NGOẠI TUYẾN"
+        }
+        guard location.coordinate != nil else {
+            return "ĐANG ĐỊNH VỊ..."
+        }
+        let acc = location.accuracy
+        let status = acc <= 5 ? "TỐT" : (acc <= 15 ? "ỔN ĐỊNH" : "YẾU")
+        return String(format: "GPS: ±%.1fm (%@)", acc, status)
+    }
     
     private func triggerHaptic() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
@@ -100,20 +130,20 @@ struct CameraView: View {
                     
                     Spacer()
                     
-                    // Brand HUD
+                    // GPS Accuracy HUD
                     HStack(spacing: 6) {
                         Circle()
-                            .fill(.yellow)
-                            .frame(width: 6, height: 6)
-                            .opacity(location.coordinate != nil ? 1 : 0.4)
-                            .shadow(color: .yellow, radius: location.coordinate != nil ? 4 : 0)
+                            .fill(gpsAccuracyColor)
+                            .frame(width: 8, height: 8)
+                            .shadow(color: gpsAccuracyColor, radius: 4)
+                            .scaleEffect(isPulseActive ? 1.25 : 0.8)
+                            .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: isPulseActive)
                         
-                        Text("TIMEMARK VN")
-                            .font(.system(.subheadline, design: .monospaced).bold())
-                            .tracking(2.5)
+                        Text(gpsAccuracyText)
+                            .font(.system(.caption, design: .monospaced).bold())
                             .foregroundStyle(.white)
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 14)
                     .padding(.vertical, 8)
                     .background(.black.opacity(0.65), in: Capsule())
                     .overlay(Capsule().stroke(.white.opacity(0.15), lineWidth: 1))
@@ -246,6 +276,7 @@ struct CameraView: View {
         .task {
             camera.start()
             location.start()
+            isPulseActive = true
         }
         .onChange(of: location.coordinate?.latitude) { oldValue, newValue in
             location.refreshWeather()
@@ -427,7 +458,7 @@ struct CameraView: View {
             let final = StampRenderer.render(image: raw, location: location,
                                               style: stamp.style, logo: stamp.logo, map: map)
             lastImage = final
-            UIImageWriteToSavedPhotosAlbum(final, nil, nil, nil)
+            LocationManager.saveImageWithMetadata(image: final, location: location)
             triggerAppReview()
         }
 
