@@ -45,6 +45,8 @@ struct StampStyle: Codable, Equatable {
     var x: Double = 0.5
     var y: Double = 0.80
     var accentHex = "#FFD400"
+    var useCustomAddress = false
+    var customAddress = ""
 
     func isEnabled(_ field: StampField) -> Bool { enabled[field] ?? false }
 }

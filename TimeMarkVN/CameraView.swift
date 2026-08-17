@@ -11,10 +11,20 @@ struct CameraView: View {
     @State private var captured = false
     @State private var share = false
     @State private var showPaywall = false
+    @State private var showGrid = false
+    
+    private func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+    }
 
     var body: some View {
         ZStack {
             CameraPreview(session: camera.session).ignoresSafeArea()
+            
+            if showGrid {
+                GridOverlayView()
+            }
 
             // Premium background vignette
             LinearGradient(colors: [.black.opacity(0.65), .clear, .black.opacity(0.85)],
@@ -23,13 +33,26 @@ struct CameraView: View {
 
             VStack {
                 // Top Telemetry HUD
-                HStack(spacing: 16) {
+                HStack(spacing: 12) {
                     Button {
+                        triggerHaptic()
                         camera.flashOn.toggle()
                     } label: {
                         Image(systemName: camera.flashOn ? "bolt.fill" : "bolt.slash.fill")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(camera.flashOn ? .yellow : .white)
+                            .frame(width: 44, height: 44)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(.white.opacity(0.15), lineWidth: 1))
+                    }
+                    
+                    Button {
+                        triggerHaptic()
+                        showGrid.toggle()
+                    } label: {
+                        Image(systemName: showGrid ? "grid" : "grid.circle")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(showGrid ? .yellow : .white)
                             .frame(width: 44, height: 44)
                             .background(.ultraThinMaterial, in: Circle())
                             .overlay(Circle().stroke(.white.opacity(0.15), lineWidth: 1))
@@ -58,6 +81,7 @@ struct CameraView: View {
                     Spacer()
                     
                     Button {
+                        triggerHaptic()
                         editor = true
                     } label: {
                         Image(systemName: "paintbrush.fill")
@@ -90,6 +114,7 @@ struct CameraView: View {
                 HStack(spacing: 8) {
                     ForEach([1, 2, 3, 5], id: \.self) { value in
                         Button {
+                            triggerHaptic()
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 camera.setZoom(CGFloat(value))
                             }
@@ -114,7 +139,10 @@ struct CameraView: View {
                     // Gallery Thumbnail or Placeholder
                     Group {
                         if let lastImage {
-                            Button { share = true } label: {
+                            Button {
+                                triggerHaptic()
+                                share = true
+                            } label: {
                                 Image(uiImage: lastImage)
                                     .resizable()
                                     .scaledToFill()
@@ -135,6 +163,7 @@ struct CameraView: View {
 
                     // Shutter Button
                     Button {
+                        triggerHaptic()
                         captured = true
                         camera.capture()
                     } label: {
@@ -159,6 +188,7 @@ struct CameraView: View {
 
                     // Rotate Camera Button
                     Button {
+                        triggerHaptic()
                         camera.toggleCamera()
                     } label: {
                         Image(systemName: "arrow.triangle.2.circlepath")
@@ -197,13 +227,13 @@ struct CameraView: View {
     private var stampPreview: some View {
         VStack(alignment: .leading, spacing: 5) {
             if stamp.style.isEnabled(.address) {
-                Label(location.address, systemImage: "location.fill")
+                Label(stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address, systemImage: "location.fill")
                     .font(.headline)
             }
             if stamp.style.isEnabled(.date) {
                 Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
                     .font(.subheadline.bold())
-                    .foregroundStyle(.yellow) // Brand color accent
+                    .foregroundStyle(Color(hex: stamp.style.accentHex))
             }
             if stamp.style.isEnabled(.gps), let c = location.coordinate {
                 Text(String(format: "%.6f° N  %.6f° E", c.latitude, c.longitude))
@@ -443,5 +473,31 @@ struct FeatureRow: View {
         .padding(.all, 12)
         .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.05), lineWidth: 1))
+    }
+}
+
+// 3x3 Grid Overlay View
+struct GridOverlayView: View {
+    var body: some View {
+        GeometryReader { geo in
+            Path { path in
+                let w = geo.size.width
+                let h = geo.size.height
+                
+                // Vertical lines
+                path.move(to: CGPoint(x: w / 3, y: 0))
+                path.addLine(to: CGPoint(x: w / 3, y: h))
+                path.move(to: CGPoint(x: w * 2 / 3, y: 0))
+                path.addLine(to: CGPoint(x: w * 2 / 3, y: h))
+                
+                // Horizontal lines
+                path.move(to: CGPoint(x: 0, y: h / 3))
+                path.addLine(to: CGPoint(x: w, y: h / 3))
+                path.move(to: CGPoint(x: 0, y: h * 2 / 3))
+                path.addLine(to: CGPoint(x: w, y: h * 2 / 3))
+            }
+            .stroke(Color.white.opacity(0.18), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+        }
+        .ignoresSafeArea()
     }
 }

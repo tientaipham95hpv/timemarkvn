@@ -12,6 +12,13 @@ struct TemplateEditorView: View {
     
     @State private var activeTab = 0 // 0: Nội dung, 1: Kiểu dáng, 2: Mẫu & Logo
     
+    private var colorBinding: Binding<Color> {
+        Binding(
+            get: { Color(hex: stamp.style.accentHex) },
+            set: { stamp.style.accentHex = $0.toHex() }
+        )
+    }
+    
     // Sample mock location for preview
     private let sampleAddress = "12 P. Tôn Thất Tùng, Trung Tự, Đống Đa, Hà Nội"
     private let sampleCoordinate = "21.004832° N  105.828456° E"
@@ -65,13 +72,13 @@ struct TemplateEditorView: View {
                         // Watermark preview overlay
                         VStack(alignment: .leading, spacing: 4) {
                             if stamp.style.isEnabled(.address) {
-                                Label(sampleAddress, systemImage: "location.fill")
+                                Label(stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress, systemImage: "location.fill")
                                     .font(.system(size: CGFloat(stamp.style.fontSize * 0.7)))
                             }
                             if stamp.style.isEnabled(.date) {
                                 Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
                                     .font(.system(size: CGFloat(stamp.style.fontSize * 0.65)).bold())
-                                    .foregroundStyle(.yellow)
+                                    .foregroundStyle(Color(hex: stamp.style.accentHex))
                             }
                             if stamp.style.isEnabled(.gps) {
                                 Text(sampleCoordinate)
@@ -148,6 +155,35 @@ struct TemplateEditorView: View {
                                     .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 14))
                                     .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.06), lineWidth: 1))
                                 }
+                                
+                                // Custom Address Card
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Toggle(isOn: $stamp.style.useCustomAddress) {
+                                        HStack(spacing: 14) {
+                                            Image(systemName: "pencil.and.outline")
+                                                .font(.headline)
+                                                .foregroundStyle(Color(hex: stamp.style.accentHex))
+                                                .frame(width: 32, height: 32)
+                                                .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+                                            Text(NSLocalizedString("Sử dụng địa chỉ thủ công", comment: ""))
+                                                .font(.body.bold())
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                                    .toggleStyle(SwitchToggleStyle(tint: .yellow))
+                                    
+                                    if stamp.style.useCustomAddress {
+                                        TextField(NSLocalizedString("Nhập địa chỉ thủ công...", comment: ""), text: $stamp.style.customAddress)
+                                            .font(.body)
+                                            .foregroundStyle(.white)
+                                            .padding(.all, 14)
+                                            .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
+                                    }
+                                }
+                                .padding(.all, 14)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 14))
+                                .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.06), lineWidth: 1))
                             }
                         } else if activeTab == 1 {
                             // Styling Tab
@@ -161,6 +197,24 @@ struct TemplateEditorView: View {
                                     
                                     TextField(NSLocalizedString("Nhập chữ tùy chỉnh...", comment: ""), text: $stamp.style.customText)
                                         .font(.body)
+                                        .foregroundStyle(.white)
+                                        .padding(.all, 14)
+                                        .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                                
+                                // Color Selector Card
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text(NSLocalizedString("MÀU ĐIỂM NHẤN", comment: ""))
+                                        .font(.system(.caption, design: .monospaced).bold())
+                                        .foregroundStyle(.white.opacity(0.4))
+                                        .tracking(1.5)
+                                    
+                                    ColorPicker(NSLocalizedString("Màu sắc chữ ký", comment: ""), selection: colorBinding)
+                                        .font(.body.bold())
                                         .foregroundStyle(.white)
                                         .padding(.all, 14)
                                         .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
@@ -407,5 +461,43 @@ struct PresetButton: View {
             .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.1), lineWidth: 1))
         }
+    }
+}
+
+// Color Hex Extension
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 255, 255, 255)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+    
+    func toHex() -> String {
+        let uic = UIColor(self)
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        uic.getRed(&r, green: &g, blue: &b, alpha: &a)
+        let rgb: Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255) << 0
+        return String(format: "#%06x", rgb)
     }
 }
