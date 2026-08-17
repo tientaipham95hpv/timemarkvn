@@ -147,7 +147,7 @@ enum StampRenderer {
                 let innerContentHeight = CGFloat(min(lines.count, 4)) * badgeLineHeight + CGFloat(max(0, min(lines.count, 4) - 1)) * 4
                 
                 var currentY = badgeBox.midY - innerContentHeight / 2
-                for (i, line) in lines.prefix(4).enumerated() {
+                for line in lines.prefix(4) {
                     let isAccent = line.contains(":") || line == style.customText
                     let lineAttrs: [NSAttributedString.Key: Any] = [
                         .font: badgeFont,

@@ -2,6 +2,7 @@ import CoreLocation
 import Network
 import ImageIO
 import Photos
+import UIKit
 
 protocol TelemetryData {
     var coordinate: CLLocationCoordinate2D? { get }
@@ -104,10 +105,10 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             return
         }
         
-        var metadata = [
+        var metadata: [String: [AnyHashable: Any]] = [
             kCGImagePropertyTIFFDictionary as String: [AnyHashable: Any](),
             kCGImagePropertyGPSDictionary as String: [AnyHashable: Any]()
-        ] as [String: Any]
+        ]
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"

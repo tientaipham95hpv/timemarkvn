@@ -111,8 +111,9 @@ struct PhotoVerifierView: View {
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    Map(coordinateRegion: .constant(MKCoordinateRegion(center: coord, latitudinalMeters: 500, longitudinalMeters: 500)), annotationItems: [MapLocation(coordinate: coord)]) { location in
-                                        MapMarker(coordinate: location.coordinate, tint: .yellow)
+                                    Map(position: .constant(MapCameraPosition.region(MKCoordinateRegion(center: coord, latitudinalMeters: 500, longitudinalMeters: 500)))) {
+                                        Marker(NSLocalizedString("Vị trí chụp", comment: ""), coordinate: coord)
+                                            .tint(.yellow)
                                     }
                                     .frame(height: 180)
                                     .clipShape(RoundedRectangle(cornerRadius: 16))
