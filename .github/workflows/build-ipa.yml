@@ -76,8 +76,10 @@ jobs:
           mkdir -p build/Payload
           cp -R "$APP_PATH" build/Payload/TimeMarkVN.app
 
+          # Strip Xcode's ad-hoc _CodeSignature to prevent conflicts when signing with ESign/Scarlet/GBox
+          rm -rf build/Payload/TimeMarkVN.app/_CodeSignature
+
           # IPA is simply a ZIP containing Payload/<App>.app.
-          # It is intentionally unsigned; eSign can sign it later.
           cd build
           /usr/bin/zip -qry TimeMarkVN.ipa Payload
 
