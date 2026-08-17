@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     @State private var paywall = false
     @State private var batch = false
+    @State private var verifier = false
     
     @AppStorage("isBiometricLockEnabled") private var isBiometricLockEnabled = false
 
@@ -93,38 +94,70 @@ struct SettingsView: View {
                             .foregroundStyle(.white.opacity(0.4))
                             .tracking(1.5)
                         
-                        Button {
-                            if store.isPro {
-                                batch = true
-                            } else {
-                                paywall = true
-                            }
-                        } label: {
-                            HStack(spacing: 16) {
-                                Image(systemName: "square.stack.3d.up.fill")
-                                    .font(.headline)
-                                    .foregroundStyle(.yellow)
-                                    .frame(width: 36, height: 36)
-                                    .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(NSLocalizedString("Xuất watermark hàng loạt", comment: ""))
-                                        .font(.body.bold())
-                                        .foregroundStyle(.white)
-                                    Text(NSLocalizedString("Đóng dấu và lưu nhiều ảnh cùng một lúc", comment: ""))
-                                        .font(.caption)
-                                        .foregroundStyle(.white.opacity(0.5))
+                        VStack(spacing: 12) {
+                            Button {
+                                if store.isPro {
+                                    batch = true
+                                } else {
+                                    paywall = true
                                 }
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .font(.caption.bold())
-                                    .foregroundStyle(.white.opacity(0.3))
+                            } label: {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "square.stack.3d.up.fill")
+                                        .font(.headline)
+                                        .foregroundStyle(.yellow)
+                                        .frame(width: 36, height: 36)
+                                        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(NSLocalizedString("Xuất watermark hàng loạt", comment: ""))
+                                            .font(.body.bold())
+                                            .foregroundStyle(.white)
+                                        Text(NSLocalizedString("Đóng dấu và lưu nhiều ảnh cùng một lúc", comment: ""))
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.5))
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(.white.opacity(0.3))
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
                             }
-                            .padding(.all, 16)
-                            .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
-                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                            
+                            Button {
+                                verifier = true
+                            } label: {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "checkmark.shield.fill")
+                                        .font(.headline)
+                                        .foregroundStyle(.yellow)
+                                        .frame(width: 36, height: 36)
+                                        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(NSLocalizedString("Thẩm định ảnh hiện trường", comment: ""))
+                                            .font(.body.bold())
+                                            .foregroundStyle(.white)
+                                        Text(NSLocalizedString("Kiểm tra tính xác thực của GPS và thời gian trên ảnh", comment: ""))
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.5))
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.bold())
+                                        .foregroundStyle(.white.opacity(0.3))
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
@@ -218,6 +251,7 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $paywall) { ProPaywallView() }
         .sheet(isPresented: $batch) { BatchExportView() }
+        .sheet(isPresented: $verifier) { PhotoVerifierView() }
     }
 }
 
