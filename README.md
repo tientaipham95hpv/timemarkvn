@@ -1,17 +1,17 @@
-# TimeMark VN V5 — GitHub Actions Build
+# GeoStamp — GitHub Actions Build
 
 ## Build unsigned IPA
 
 1. Upload the contents of this ZIP to a GitHub repository.
 2. Open **Actions**.
-3. Select **Build TimeMark VN V5 Unsigned IPA**.
+3. Select **Build Unsigned IPA**.
 4. Click **Run workflow**.
 5. Wait for the job to finish.
 6. Open the completed workflow run.
-7. Download artifact **TimeMarkVN-V5-unsigned-IPA**.
+7. Download artifact **GeoStamp-Unsigned-IPA**.
 
 The workflow generates the Xcode project with XcodeGen and builds an unsigned
-`TimeMarkVN-V5-unsigned.ipa`.
+`GeoStamp.ipa`.
 
 ## Important
 
@@ -38,8 +38,8 @@ The app requests:
 
 The source contains sample Product IDs:
 
-- `com.timemarkvn.pro.monthly`
-- `com.timemarkvn.pro.yearly`
-- `com.timemarkvn.pro.lifetime`
+- `com.geostamp.pro.monthly`
+- `com.geostamp.pro.yearly`
+- `com.geostamp.pro.lifetime`
 
 These do not become real App Store products until configured in App Store Connect.

@@ -8,9 +8,9 @@ final class ProStore: ObservableObject {
     @Published var message = ""
 
     private let productIDs = [
-        "com.timemarkvn.pro.monthly",
-        "com.timemarkvn.pro.yearly",
-        "com.timemarkvn.pro.lifetime"
+        "com.geostamp.pro.monthly",
+        "com.geostamp.pro.yearly",
+        "com.geostamp.pro.lifetime"
     ]
 
     init() {

@@ -38,8 +38,8 @@ jobs:
       - name: Verify generated Xcode project
         run: |
           set -euo pipefail
-          test -f TimeMarkVN.xcodeproj/project.pbxproj
-          grep -E 'objectVersion|compatibilityVersion' TimeMarkVN.xcodeproj/project.pbxproj | head -5 || true
+          test -f GeoStamp.xcodeproj/project.pbxproj
+          grep -E 'objectVersion|compatibilityVersion' GeoStamp.xcodeproj/project.pbxproj | head -5 || true
 
       - name: Build unsigned app
         run: |
@@ -48,8 +48,8 @@ jobs:
           mkdir -p build
 
           xcodebuild \
-            -project TimeMarkVN.xcodeproj \
-            -scheme TimeMarkVN \
+            -project GeoStamp.xcodeproj \
+            -scheme GeoStamp \
             -configuration Release \
             -sdk iphoneos \
             -derivedDataPath "$PWD/build/DerivedData" \
@@ -64,39 +64,40 @@ jobs:
         run: |
           set -euo pipefail
 
-          APP_PATH=$(find "$PWD/build/DerivedData/Build/Products/Release-iphoneos"             -maxdepth 1 -type d -name "TimeMarkVN.app" -print -quit)
+          APP_PATH=$(find "$PWD/build/DerivedData/Build/Products/Release-iphoneos" \
+            -maxdepth 1 -type d -name "GeoStamp.app" -print -quit)
 
           if [ -z "$APP_PATH" ]; then
-            echo "Không tìm thấy TimeMarkVN.app"
+            echo "Không tìm thấy GeoStamp.app"
             find "$PWD/build/DerivedData/Build/Products" -maxdepth 3 -print
             exit 1
           fi
 
-          rm -rf build/Payload build/TimeMarkVN.ipa
+          rm -rf build/Payload build/GeoStamp.ipa
           mkdir -p build/Payload
-          cp -R "$APP_PATH" build/Payload/TimeMarkVN.app
+          cp -R "$APP_PATH" build/Payload/GeoStamp.app
 
           # Strip Xcode's ad-hoc _CodeSignature to prevent conflicts when signing with ESign/Scarlet/GBox
-          rm -rf build/Payload/TimeMarkVN.app/_CodeSignature
+          rm -rf build/Payload/GeoStamp.app/_CodeSignature
 
           # IPA is simply a ZIP containing Payload/<App>.app.
           cd build
-          /usr/bin/zip -qry TimeMarkVN.ipa Payload
+          /usr/bin/zip -qry GeoStamp.ipa Payload
 
           echo "Created unsigned IPA:"
-          ls -lh TimeMarkVN.ipa
+          ls -lh GeoStamp.ipa
           echo "IPA contents:"
-          unzip -l TimeMarkVN.ipa | head -40
+          unzip -l GeoStamp.ipa | head -40
 
       - name: Verify IPA structure
         run: |
           set -euo pipefail
-          test -f build/TimeMarkVN.ipa
-          unzip -l build/TimeMarkVN.ipa | grep -q "Payload/TimeMarkVN.app/"
+          test -f build/GeoStamp.ipa
+          unzip -l build/GeoStamp.ipa | grep -q "Payload/GeoStamp.app/"
 
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: TimeMarkVN-Unsigned-IPA
-          path: build/TimeMarkVN.ipa
+          name: GeoStamp-Unsigned-IPA
+          path: build/GeoStamp.ipa
           if-no-files-found: error

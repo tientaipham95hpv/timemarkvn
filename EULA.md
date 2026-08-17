@@ -5,13 +5,13 @@
 
 ## TIẾNG VIỆT (VIETNAMESE)
 
-Vui lòng đọc kỹ Thỏa thuận cấp phép người dùng cuối ("Thỏa thuận") này trước khi tải xuống hoặc sử dụng ứng dụng **TimeMark VN**.
+Vui lòng đọc kỹ Thỏa thuận cấp phép người dùng cuối ("Thỏa thuận") này trước khi tải xuống hoặc sử dụng ứng dụng **GeoStamp**.
 
 ### 1. Phạm vi Cấp phép
-Chúng tôi cấp cho bạn quyền không độc quyền, không thể chuyển nhượng, có thể thu hồi để sử dụng ứng dụng TimeMark VN trên các thiết bị chạy hệ điều hành iOS thuộc sở hữu hoặc quyền kiểm soát của bạn, tuân theo các Điều khoản dịch vụ của App Store.
+Chúng tôi cấp cho bạn quyền không độc quyền, không thể chuyển nhượng, có thể thu hồi để sử dụng ứng dụng GeoStamp trên các thiết bị chạy hệ điều hành iOS thuộc sở hữu hoặc quyền kiểm soát của bạn, tuân theo các Điều khoản dịch vụ của App Store.
 
 ### 2. Giao dịch mua hàng trong Ứng dụng (In-App Purchases)
-TimeMark VN cung cấp các gói đăng ký định kỳ (Hàng tháng, Hàng năm) và mua một lần (Trọn đời) để nâng cấp lên các tính năng Pro:
+GeoStamp cung cấp các gói đăng ký định kỳ (Hàng tháng, Hàng năm) và mua một lần (Trọn đời) để nâng cấp lên các tính năng Pro:
 - **Thanh toán**: Sẽ được tính vào tài khoản ID Apple của bạn ngay sau khi xác nhận mua hàng.
 - **Tự động gia hạn**: Các gói đăng ký tháng/năm sẽ tự động gia hạn trừ khi bạn tắt tính năng tự động gia hạn ít nhất 24 giờ trước khi kết thúc chu kỳ thanh toán hiện tại.
 - **Quản lý & Hủy bỏ**: Bạn có thể quản lý, thay đổi hoặc hủy đăng ký bất kỳ lúc nào bằng cách truy cập vào phần Cài đặt tài khoản trên App Store của bạn. Mọi vấn đề hoàn tiền sẽ do Apple xử lý theo quy định của họ.
@@ -24,13 +24,13 @@ TimeMark VN cung cấp các gói đăng ký định kỳ (Hàng tháng, Hàng n�
 
 ## ENGLISH
 
-Please read this End User License Agreement ("Agreement") carefully before downloading or using the **TimeMark VN** application.
+Please read this End User License Agreement ("Agreement") carefully before downloading or using the **GeoStamp** application.
 
 ### 1. License Grant
-We grant you a non-exclusive, non-transferable, revocable license to use the TimeMark VN application on compatible iOS devices owned or controlled by you, subject to the App Store Terms of Service.
+We grant you a non-exclusive, non-transferable, revocable license to use the GeoStamp application on compatible iOS devices owned or controlled by you, subject to the App Store Terms of Service.
 
 ### 2. In-App Purchases & Subscriptions
-TimeMark VN offers premium subscriptions (Monthly, Yearly) and one-time purchases (Lifetime) for Pro access:
+GeoStamp offers premium subscriptions (Monthly, Yearly) and one-time purchases (Lifetime) for Pro access:
 - **Billing**: Charges will be billed to your Apple ID Account at purchase confirmation.
 - **Auto-Renewal**: Subscriptions automatically renew unless auto-renew is turned off at least 24 hours before the end of the current billing period.
 - **Cancellations & Refunds**: Subscriptions can be managed or cancelled at any time through your iOS Account Settings. Refunds are processed exclusively by Apple.

@@ -5,10 +5,10 @@
 
 ## TIẾNG VIỆT (VIETNAMESE)
 
-Chào mừng bạn đến với **TimeMark VN**. Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ thông tin cá nhân của người dùng.
+Chào mừng bạn đến với **GeoStamp**. Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ thông tin cá nhân của người dùng.
 
 ### 1. Thu thập và Xử lý Dữ liệu trên Thiết bị (On-Device Processing)
-TimeMark VN là ứng dụng đóng dấu thông tin thực địa (vị trí GPS, thời gian, la bàn, bản đồ). Chúng tôi áp dụng nguyên tắc **Bảo mật thiết kế (Privacy by Design)**:
+GeoStamp là ứng dụng đóng dấu thông tin thực địa (vị trí GPS, thời gian, la bàn, bản đồ). Chúng tôi áp dụng nguyên tắc **Bảo mật thiết kế (Privacy by Design)**:
 - **Ảnh chụp & Video**: Được chụp từ Camera và lưu trực tiếp vào ứng dụng Ảnh (Photo Library) trên điện thoại của bạn. Chúng tôi **không** lưu trữ hay tải ảnh của bạn lên bất kỳ máy chủ nào.
 - **Dữ liệu Vị trí (GPS)**: Chỉ được sử dụng trực tiếp để lấy địa chỉ và tọa độ nhằm vẽ đè lên hình ảnh tại thời điểm chụp. Dữ liệu này được xử lý hoàn toàn cục bộ trên thiết bị và **không bao giờ** bị theo dõi hay gửi đi nơi khác.
 
@@ -29,10 +29,10 @@ Chúng tôi có thể cập nhật chính sách bảo mật này theo thời gia
 
 ## ENGLISH
 
-Welcome to **TimeMark VN**. We respect your privacy and are committed to protecting your personal data.
+Welcome to **GeoStamp**. We respect your privacy and are committed to protecting your personal data.
 
 ### 1. On-Device Processing
-TimeMark VN is an engineering/fieldwork camera watermark application. We run under the **Privacy by Design** principle:
+GeoStamp is an engineering/fieldwork camera watermark application. We run under the **Privacy by Design** principle:
 - **Photos & Videos**: Processed directly on your device and saved to your native iOS Photo Library. We **do not** upload, store, or transmit your media to any external servers.
 - **Location Data (GPS)**: Read locally only at the exact time of photo capture to retrieve coordinates and addresses. This data stays strictly on your device.
 

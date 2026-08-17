@@ -16,7 +16,7 @@ enum StampRenderer {
 
             // Draw tiled/grid watermark (diagonal copyright overlay)
             if style.isTiled {
-                let watermarkText = style.customText.isEmpty ? "TimeMark VN" : style.customText
+                let watermarkText = style.customText.isEmpty ? "GeoStamp" : style.customText
                 let tiledFont = UIFont.systemFont(ofSize: w * 0.024, weight: .bold)
                 let attrs: [NSAttributedString.Key: Any] = [
                     .font: tiledFont,

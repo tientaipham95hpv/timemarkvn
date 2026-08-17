@@ -1,4 +1,4 @@
-name: Build TimeMark VN V5 Unsigned IPA
+name: Build GeoStamp Unsigned IPA
 
 on:
   workflow_dispatch:
@@ -27,8 +27,8 @@ jobs:
       - name: Resolve package dependencies
         run: |
           xcodebuild \
-            -project TimeMarkVN.xcodeproj \
-            -scheme TimeMarkVN \
+            -project GeoStamp.xcodeproj \
+            -scheme GeoStamp \
             -sdk iphoneos \
             -configuration Release \
             -showBuildSettings >/dev/null
@@ -37,8 +37,8 @@ jobs:
         run: |
           rm -rf build
           xcodebuild \
-            -project TimeMarkVN.xcodeproj \
-            -scheme TimeMarkVN \
+            -project GeoStamp.xcodeproj \
+            -scheme GeoStamp \
             -sdk iphoneos \
             -configuration Release \
             -derivedDataPath build \
@@ -51,18 +51,18 @@ jobs:
       - name: Package unsigned IPA
         run: |
           set -e
-          APP_PATH="build/Build/Products/Release-iphoneos/TimeMarkVN.app"
+          APP_PATH="build/Build/Products/Release-iphoneos/GeoStamp.app"
           test -d "$APP_PATH"
-          rm -rf Payload TimeMarkVN-V5-unsigned.ipa
+          rm -rf Payload GeoStamp.ipa
           mkdir Payload
-          cp -R "$APP_PATH" Payload/TimeMarkVN.app
-          /usr/bin/zip -qry TimeMarkVN-V5-unsigned.ipa Payload
-          ls -lh TimeMarkVN-V5-unsigned.ipa
+          cp -R "$APP_PATH" Payload/GeoStamp.app
+          /usr/bin/zip -qry GeoStamp.ipa Payload
+          ls -lh GeoStamp.ipa
 
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: TimeMarkVN-V5-unsigned-IPA
-          path: TimeMarkVN-V5-unsigned.ipa
+          name: GeoStamp-Unsigned-IPA
+          path: GeoStamp.ipa
           if-no-files-found: error
           retention-days: 14

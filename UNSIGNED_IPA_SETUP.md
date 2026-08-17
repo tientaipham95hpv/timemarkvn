@@ -1,7 +1,7 @@
 # Unsigned IPA
 
 This workflow intentionally builds an **unsigned** iOS app and packages it as:
-`Payload/TimeMarkVN.app` inside `TimeMarkVN.ipa`.
+`Payload/GeoStamp.app` inside `GeoStamp.ipa`.
 
 No Apple certificate, provisioning profile, or signing secret is required.
 

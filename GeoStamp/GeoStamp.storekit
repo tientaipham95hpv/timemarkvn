@@ -11,16 +11,16 @@
       "localizations" : [
         {
           "description" : "Trọn đời chuyên nghiệp",
-          "displayName" : "TimeMark Pro Lifetime",
+          "displayName" : "GeoStamp Pro Lifetime",
           "locale" : "vi"
         },
         {
           "description" : "Lifetime professional access",
-          "displayName" : "TimeMark Pro Lifetime",
+          "displayName" : "GeoStamp Pro Lifetime",
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.timemarkvn.pro.lifetime",
+      "productID" : "com.geostamp.pro.lifetime",
       "referenceName" : "Pro Lifetime",
       "type" : "NonConsumable"
     }
@@ -100,16 +100,16 @@
           "localizations" : [
             {
               "description" : "Đăng ký theo tháng",
-              "displayName" : "TimeMark Pro Monthly",
+              "displayName" : "GeoStamp Pro Monthly",
               "locale" : "vi"
             },
             {
               "description" : "Monthly subscription",
-              "displayName" : "TimeMark Pro Monthly",
+              "displayName" : "GeoStamp Pro Monthly",
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.timemarkvn.pro.monthly",
+          "productID" : "com.geostamp.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Pro Monthly",
           "subscriptionGroupID" : "7E4C4B59",
@@ -130,16 +130,16 @@
           "localizations" : [
             {
               "description" : "Đăng ký theo năm",
-              "displayName" : "TimeMark Pro Yearly",
+              "displayName" : "GeoStamp Pro Yearly",
               "locale" : "vi"
             },
             {
               "description" : "Yearly subscription",
-              "displayName" : "TimeMark Pro Yearly",
+              "displayName" : "GeoStamp Pro Yearly",
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.timemarkvn.pro.yearly",
+          "productID" : "com.geostamp.pro.yearly",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Pro Yearly",
           "subscriptionGroupID" : "7E4C4B59",

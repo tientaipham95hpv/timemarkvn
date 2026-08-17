@@ -38,7 +38,7 @@ struct StampStyle: Codable, Equatable {
     var enabled: [StampField: Bool] = Dictionary(uniqueKeysWithValues:
         StampField.allCases.map { ($0, [.address, .date, .gps, .weather, .map].contains($0)) }
     )
-    var customText = "TimeMark VN"
+    var customText = "GeoStamp"
     var fontSize: Double = 22
     var opacity: Double = 0.72
     var cornerRadius: Double = 18

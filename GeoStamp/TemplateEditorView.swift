@@ -183,7 +183,7 @@ struct TemplateEditorView: View {
                                         .overlay(
                                             VStack(spacing: 1) {
                                                 if stamp.style.isEnabled(.address) {
-                                                    Text("📍 TimeMark")
+                                                    Text("📍 GeoStamp")
                                                         .font(.system(size: 5, weight: .bold))
                                                 }
                                                 if stamp.style.isEnabled(.date) {

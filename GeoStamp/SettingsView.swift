@@ -29,7 +29,7 @@ struct SettingsView: View {
                             .shadow(color: .yellow.opacity(0.2), radius: 8)
                             .padding(.top, 16)
                         
-                        Text("TIMEMARK VN")
+                        Text("GEOSTAMP")
                             .font(.system(.title3, design: .monospaced).bold())
                             .tracking(4.0)
                             .foregroundStyle(.white)
@@ -234,7 +234,7 @@ struct SettingsView: View {
                         
                         // App Version Info
                         VStack(spacing: 4) {
-                            Text(NSLocalizedString("TimeMark VN v5.0 (Build 2026)", comment: ""))
+                            Text(NSLocalizedString("GeoStamp v5.0 (Build 2026)", comment: ""))
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundStyle(.white.opacity(0.3))
                             Text(NSLocalizedString("Thiết kế tối ưu cho StoreKit 2 & iOS 17+", comment: ""))

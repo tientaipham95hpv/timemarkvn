@@ -52,7 +52,7 @@ struct CameraView: View {
     }
     
     private func triggerAppReview() {
-        let key = "TimeMarkVN_CapturedCount"
+        let key = "GeoStamp_CapturedCount"
         let currentCount = UserDefaults.standard.integer(forKey: key)
         let nextCount = currentCount + 1
         UserDefaults.standard.set(nextCount, forKey: key)
@@ -408,7 +408,7 @@ struct CameraView: View {
                         .overlay(
                             VStack(spacing: 2) {
                                 if stamp.style.isEnabled(.address) {
-                                    Text(location.isOffline ? "Offline" : "📍 TimeMark")
+                                    Text(location.isOffline ? "Offline" : "📍 GeoStamp")
                                         .font(.system(size: 8, weight: .bold))
                                 }
                                 if stamp.style.isEnabled(.date) {
@@ -511,7 +511,7 @@ struct ProPaywallView: View {
                             .shadow(color: .yellow.opacity(0.35), radius: 12)
                             .padding(.top, 24)
                         
-                        Text(NSLocalizedString("TimeMark Pro", comment: ""))
+                        Text(NSLocalizedString("GeoStamp Pro", comment: ""))
                             .font(.system(.title, design: .rounded).bold())
                             .foregroundStyle(.white)
                         

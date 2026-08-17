@@ -1,4 +1,4 @@
-# TimeMark VN V5
+# GeoStamp
 
 V5 = bản nâng cấp từ prototype sang hướng sản phẩm thương mại.
 
@@ -18,9 +18,9 @@ V5 = bản nâng cấp từ prototype sang hướng sản phẩm thương mại.
 - Giữ các tính năng V4: GPS, địa chỉ, weather, map, watermark editor, kéo watermark, logo, preset, template.
 
 ## Product IDs cần tạo trong App Store Connect
-- com.timemarkvn.pro.monthly
-- com.timemarkvn.pro.yearly
-- com.timemarkvn.pro.lifetime
+- com.geostamp.pro.monthly
+- com.geostamp.pro.yearly
+- com.geostamp.pro.lifetime
 
 Tên và giá chỉ là ví dụ; cần cấu hình sản phẩm thật trong App Store Connect.
 

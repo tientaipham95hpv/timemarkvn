@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct TimeMarkVNApp: App {
+struct GeoStampApp: App {
     @StateObject private var location = LocationManager()
     @StateObject private var stamp = StampStore()
     @StateObject private var store = ProStore()
