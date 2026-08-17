@@ -48,6 +48,8 @@ struct StampStyle: Codable, Equatable {
     var useCustomAddress = false
     var customAddress = ""
     var fontDesign = "default"
+    var isTiled = false
+    var customFields: [String] = []
 
     func isEnabled(_ field: StampField) -> Bool { enabled[field] ?? false }
 }

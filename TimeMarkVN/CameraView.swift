@@ -41,6 +41,30 @@ struct CameraView: View {
             if showGrid {
                 GridOverlayView()
             }
+            
+            if stamp.style.isTiled {
+                GeometryReader { geo in
+                    let cols = Int(geo.size.width / 120) + 1
+                    let rows = Int(geo.size.height / 80) + 1
+                    VStack(spacing: 40) {
+                        ForEach(0..<rows, id: \.self) { _ in
+                            HStack(spacing: 56) {
+                                ForEach(0..<cols, id: \.self) { _ in
+                                    Text(stamp.style.customText)
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(.white)
+                                        .opacity(0.12)
+                                        .rotationEffect(.degrees(-30))
+                                }
+                            }
+                        }
+                    }
+                    .padding(.top, 32)
+                    .padding(.leading, 16)
+                }
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
 
             // Premium background vignette
             LinearGradient(colors: [.black.opacity(0.65), .clear, .black.opacity(0.85)],
@@ -268,6 +292,17 @@ struct CameraView: View {
             if stamp.style.isEnabled(.altitude) {
                 Text(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.custom) {
+                Text(stamp.style.customText)
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .semibold, designName: stamp.style.fontDesign))
+                
+                ForEach(stamp.style.customFields, id: \.self) { field in
+                    if !field.isEmpty {
+                        Text(field)
+                            .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .semibold, designName: stamp.style.fontDesign))
+                    }
+                }
             }
         }
         .foregroundStyle(.white)

@@ -69,6 +69,30 @@ struct TemplateEditorView: View {
                                     .stroke(.white.opacity(0.1), lineWidth: 1)
                             )
                         
+                        if stamp.style.isTiled {
+                            GeometryReader { geo in
+                                let cols = Int(geo.size.width / 100) + 1
+                                let rows = Int(geo.size.height / 60) + 1
+                                VStack(spacing: 30) {
+                                    ForEach(0..<rows, id: \.self) { _ in
+                                        HStack(spacing: 36) {
+                                            ForEach(0..<cols, id: \.self) { _ in
+                                                Text(stamp.style.customText)
+                                                    .font(.system(size: 8, weight: .bold))
+                                                    .foregroundStyle(.white)
+                                                    .opacity(0.12)
+                                                    .rotationEffect(.degrees(-30))
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.top, 16)
+                                .padding(.leading, 12)
+                            }
+                            .frame(height: 180)
+                            .clipped()
+                        }
+                        
                         // Watermark preview overlay
                         VStack(alignment: .leading, spacing: 4) {
                             if stamp.style.isEnabled(.address) {
@@ -194,19 +218,55 @@ struct TemplateEditorView: View {
                         } else if activeTab == 1 {
                             // Styling Tab
                             VStack(alignment: .leading, spacing: 20) {
-                                // Text Customizer Card
+                                // Text Customizer Card (Multiple Custom Fields)
                                 VStack(alignment: .leading, spacing: 12) {
                                     Text(NSLocalizedString("CHỮ TÙY CHỈNH", comment: ""))
                                         .font(.system(.caption, design: .monospaced).bold())
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    TextField(NSLocalizedString("Nhập chữ tùy chỉnh...", comment: ""), text: $stamp.style.customText)
+                                    TextField(NSLocalizedString("Dòng 1...", comment: ""), text: $stamp.style.customText)
                                         .font(.body)
                                         .foregroundStyle(.white)
-                                        .padding(.all, 14)
-                                        .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
-                                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
+                                        .padding(.all, 12)
+                                        .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
+                                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.12), lineWidth: 1))
+                                    
+                                    // Pro custom lines
+                                    ForEach(0..<2, id: \.self) { index in
+                                        HStack {
+                                            TextField(String(format: NSLocalizedString("Dòng %d (Pro)...", comment: ""), index + 2), text: Binding(
+                                                get: {
+                                                    if index < stamp.style.customFields.count {
+                                                        return stamp.style.customFields[index]
+                                                    }
+                                                    return ""
+                                                },
+                                                set: { val in
+                                                    if store.isPro {
+                                                        while stamp.style.customFields.count <= index {
+                                                            stamp.style.customFields.append("")
+                                                        }
+                                                        stamp.style.customFields[index] = val
+                                                    } else {
+                                                        paywall = true
+                                                    }
+                                                }
+                                            ))
+                                            .font(.body)
+                                            .foregroundStyle(store.isPro ? .white : .white.opacity(0.4))
+                                            .disabled(!store.isPro)
+                                            
+                                            if !store.isPro {
+                                                Image(systemName: "lock.fill")
+                                                    .font(.caption)
+                                                    .foregroundStyle(.yellow)
+                                            }
+                                        }
+                                        .padding(.all, 12)
+                                        .background(.white.opacity(store.isPro ? 0.04 : 0.02), in: RoundedRectangle(cornerRadius: 10))
+                                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(store.isPro ? .white.opacity(0.12) : .white.opacity(0.06), lineWidth: 1))
+                                    }
                                 }
                                 .padding(.all, 16)
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
@@ -229,6 +289,40 @@ struct TemplateEditorView: View {
                                 .padding(.all, 16)
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
                                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+
+                                // Grid Watermark Toggle Card (Pro)
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Toggle(isOn: Binding(
+                                        get: { stamp.style.isTiled },
+                                        set: {
+                                            if store.isPro {
+                                                stamp.style.isTiled = $0
+                                            } else {
+                                                paywall = true
+                                            }
+                                        }
+                                    )) {
+                                        HStack(spacing: 14) {
+                                            Image(systemName: "grid.multiply")
+                                                .font(.headline)
+                                                .foregroundStyle(.yellow)
+                                                .frame(width: 32, height: 32)
+                                                .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(NSLocalizedString("Lưới bảo vệ ảnh (Pro)", comment: ""))
+                                                    .font(.body.bold())
+                                                    .foregroundStyle(.white)
+                                                Text(NSLocalizedString("Phủ bản quyền mờ chéo khắp hình", comment: ""))
+                                                    .font(.system(size: 10))
+                                                    .foregroundStyle(.white.opacity(0.5))
+                                            }
+                                        }
+                                    }
+                                    .toggleStyle(SwitchToggleStyle(tint: .yellow))
+                                }
+                                .padding(.all, 14)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 14))
+                                .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.06), lineWidth: 1))
                                 
                                 // Font Selector Card
                                 VStack(alignment: .leading, spacing: 12) {
@@ -280,25 +374,47 @@ struct TemplateEditorView: View {
                                         .foregroundStyle(.white.opacity(0.4))
                                         .tracking(1.5)
                                     
-                                    PhotosPicker(selection: $logoItem, matching: .images) {
-                                        HStack {
-                                            Image(systemName: "photo.badge.plus")
-                                                .font(.headline)
-                                            Text(stamp.logo != nil ? NSLocalizedString("Thay đổi logo cá nhân", comment: "") : NSLocalizedString("Chọn logo thương hiệu của bạn", comment: ""))
-                                                .font(.body.bold())
-                                            Spacer()
-                                            if let logo = stamp.logo {
-                                                Image(uiImage: logo)
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 36, height: 36)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    if store.isPro {
+                                        PhotosPicker(selection: $logoItem, matching: .images) {
+                                            HStack {
+                                                Image(systemName: "photo.badge.plus")
+                                                    .font(.headline)
+                                                Text(stamp.logo != nil ? NSLocalizedString("Thay đổi logo cá nhân", comment: "") : NSLocalizedString("Chọn logo thương hiệu của bạn", comment: ""))
+                                                    .font(.body.bold())
+                                                Spacer()
+                                                if let logo = stamp.logo {
+                                                    Image(uiImage: logo)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .frame(width: 36, height: 36)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                                }
                                             }
+                                            .foregroundStyle(.white)
+                                            .padding(.all, 16)
+                                            .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
+                                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
                                         }
-                                        .foregroundStyle(.white)
-                                        .padding(.all, 16)
-                                        .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
-                                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.12), lineWidth: 1))
+                                    } else {
+                                        Button {
+                                            paywall = true
+                                        } label: {
+                                            HStack {
+                                                Image(systemName: "lock.fill")
+                                                    .font(.headline)
+                                                    .foregroundStyle(.yellow)
+                                                Text(NSLocalizedString("Chọn logo thương hiệu của bạn (Pro)", comment: ""))
+                                                    .font(.body.bold())
+                                                Spacer()
+                                                Image(systemName: "chevron.right")
+                                                    .font(.caption.bold())
+                                                    .foregroundStyle(.white.opacity(0.3))
+                                            }
+                                            .foregroundStyle(.white.opacity(0.6))
+                                            .padding(.all, 16)
+                                            .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 12))
+                                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.08), lineWidth: 1))
+                                        }
                                     }
                                 }
                                 .padding(.all, 16)

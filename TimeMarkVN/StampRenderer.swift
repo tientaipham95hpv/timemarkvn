@@ -13,6 +13,35 @@ enum StampRenderer {
 
             let w = image.size.width
             let h = image.size.height
+
+            // Draw tiled/grid watermark (diagonal copyright overlay)
+            if style.isTiled {
+                let watermarkText = style.customText.isEmpty ? "TimeMark VN" : style.customText
+                let tiledFont = UIFont.systemFont(ofSize: w * 0.024, weight: .bold)
+                let attrs: [NSAttributedString.Key: Any] = [
+                    .font: tiledFont,
+                    .foregroundColor: UIColor.white.withAlphaComponent(0.12)
+                ]
+                let textRect = watermarkText.size(withAttributes: attrs)
+                let spacingX = textRect.width + w * 0.15
+                let spacingY = textRect.height + h * 0.15
+                
+                var currentX: CGFloat = 0
+                while currentX < w {
+                    var currentY: CGFloat = 0
+                    while currentY < h {
+                        if let context = UIGraphicsGetCurrentContext() {
+                            context.saveGState()
+                            context.translateBy(x: currentX, y: currentY)
+                            context.rotate(by: -CGFloat.pi / 6)
+                            watermarkText.draw(at: .zero, withAttributes: attrs)
+                            context.restoreGState()
+                        }
+                        currentY += spacingY
+                    }
+                    currentX += spacingX
+                }
+            }
             
             // Calculate dynamic box height based on number of active fields
             var lines: [String] = []
@@ -35,7 +64,14 @@ enum StampRenderer {
             if style.isEnabled(.weather) {
                 lines.append("☁️ \(location.temperature) • \(location.weatherText)")
             }
-            if style.isEnabled(.custom) { lines.append(style.customText) }
+            if style.isEnabled(.custom) {
+                lines.append(style.customText)
+                for field in style.customFields {
+                    if !field.isEmpty {
+                        lines.append(field)
+                    }
+                }
+            }
 
             let lineSpacing: CGFloat = 8
             let fontSize = style.fontSize * 1.5 // Scaling font size for output resolution
