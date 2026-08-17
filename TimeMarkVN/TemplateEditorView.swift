@@ -336,9 +336,9 @@ struct TemplateEditorView: View {
                                     .padding(.all, 12)
                                     .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
                                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.12), lineWidth: 1))
-                                    .onChange(of: speechHelper.transcript) { newVal in
-                                        if !newVal.isEmpty {
-                                            stamp.style.customText = newVal
+                                    .onChange(of: speechHelper.transcript) { oldValue, newValue in
+                                        if !newValue.isEmpty {
+                                            stamp.style.customText = newValue
                                         }
                                     }
                                     

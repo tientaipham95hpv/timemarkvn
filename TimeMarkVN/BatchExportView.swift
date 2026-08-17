@@ -250,4 +250,3 @@ struct EXIFTelemetry: TelemetryData {
     var isOffline: Bool = false
     var timeZone: TimeZone?
 }
-}

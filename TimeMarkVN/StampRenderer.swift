@@ -188,20 +188,20 @@ enum StampRenderer {
                     line.draw(in: CGRect(x: textInsetBox.minX, y: currentY, width: textInsetBox.width - (style.isEnabled(.map) ? 150 : 0), height: size.height), withAttributes: attrs)
                     currentY += size.height + lineSpacing
                 }
-            }
 
-            // Draw map preview if active
-            if style.isEnabled(.map), let map {
-                let size = min(box.width * 0.28, box.height - boxPaddingY * 2)
-                map.draw(in: CGRect(x: box.maxX - size - boxPaddingX, y: box.minY + (box.height - size) / 2,
-                                    width: size, height: size))
-            }
+                // Draw map preview if active (Classic layout only)
+                if style.isEnabled(.map), let map {
+                    let size = min(box.width * 0.28, box.height - boxPaddingY * 2)
+                    map.draw(in: CGRect(x: box.maxX - size - boxPaddingX, y: box.minY + (box.height - size) / 2,
+                                        width: size, height: size))
+                }
 
-            // Draw brand logo if active
-            if style.isEnabled(.logo), let logo {
-                let size = min(72, box.width * 0.12)
-                logo.draw(in: CGRect(x: box.maxX - size - boxPaddingX, y: box.minY + 12,
-                                     width: size, height: size))
+                // Draw brand logo if active (Classic layout only)
+                if style.isEnabled(.logo), let logo {
+                    let size = min(72, box.width * 0.12)
+                    logo.draw(in: CGRect(x: box.maxX - size - boxPaddingX, y: box.minY + 12,
+                                         width: size, height: size))
+                }
             }
         }
     }
