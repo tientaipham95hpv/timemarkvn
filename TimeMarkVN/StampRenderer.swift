@@ -17,8 +17,9 @@ enum StampRenderer {
             // Calculate dynamic box height based on number of active fields
             var lines: [String] = []
             let addr = style.useCustomAddress ? (style.customAddress.isEmpty ? location.address : style.customAddress) : location.address
+            let tag = style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
             
-            if style.isEnabled(.address) { lines.append("📍 " + addr) }
+            if style.isEnabled(.address) { lines.append("📍 " + tag + addr) }
             if style.isEnabled(.date) {
                 lines.append(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium))
             }

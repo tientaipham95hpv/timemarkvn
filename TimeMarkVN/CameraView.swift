@@ -227,7 +227,9 @@ struct CameraView: View {
     private var stampPreview: some View {
         VStack(alignment: .leading, spacing: 5) {
             if stamp.style.isEnabled(.address) {
-                Label(stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address, systemImage: "location.fill")
+                let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
+                let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? location.address : stamp.style.customAddress) : location.address
+                Label(tag + addr, systemImage: "location.fill")
                     .font(.headline)
             }
             if stamp.style.isEnabled(.date) {

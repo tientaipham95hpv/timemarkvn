@@ -72,7 +72,9 @@ struct TemplateEditorView: View {
                         // Watermark preview overlay
                         VStack(alignment: .leading, spacing: 4) {
                             if stamp.style.isEnabled(.address) {
-                                Label(stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress, systemImage: "location.fill")
+                                let tag = stamp.style.useCustomAddress ? "[\(NSLocalizedString("Thủ công", comment: ""))] " : "[\(NSLocalizedString("Tự động", comment: ""))] "
+                                let addr = stamp.style.useCustomAddress ? (stamp.style.customAddress.isEmpty ? sampleAddress : stamp.style.customAddress) : sampleAddress
+                                Label(tag + addr, systemImage: "location.fill")
                                     .font(.system(size: CGFloat(stamp.style.fontSize * 0.7)))
                             }
                             if stamp.style.isEnabled(.date) {
