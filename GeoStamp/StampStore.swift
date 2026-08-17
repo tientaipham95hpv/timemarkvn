@@ -43,7 +43,7 @@ struct StampStyle: Codable, Equatable {
     var opacity: Double = 0.72
     var cornerRadius: Double = 18
     var x: Double = 0.5
-    var y: Double = 0.80
+    var y: Double = 0.95
     var accentHex = "#FFD400"
     var useCustomAddress = false
     var customAddress = ""
@@ -53,6 +53,60 @@ struct StampStyle: Codable, Equatable {
     var layoutType = "classic"
 
     func isEnabled(_ field: StampField) -> Bool { enabled[field] ?? false }
+    
+    enum PositionPreset: String, CaseIterable, Identifiable {
+        case bottomCenter = "bottomCenter"
+        case bottomLeft = "bottomLeft"
+        case bottomRight = "bottomRight"
+        case topCenter = "topCenter"
+        case topLeft = "topLeft"
+        case topRight = "topRight"
+        case center = "center"
+        
+        var id: String { rawValue }
+        
+        var title: String {
+            switch self {
+            case .bottomCenter: return "Dưới cùng"
+            case .bottomLeft: return "Dưới - Trái"
+            case .bottomRight: return "Dưới - Phải"
+            case .topCenter: return "Trên cùng"
+            case .topLeft: return "Trên - Trái"
+            case .topRight: return "Trên - Phải"
+            case .center: return "Giữa ảnh"
+            }
+        }
+        
+        var icon: String {
+            switch self {
+            case .bottomCenter: return "arrow.down.to.line"
+            case .bottomLeft: return "arrow.down.left.square"
+            case .bottomRight: return "arrow.down.right.square"
+            case .topCenter: return "arrow.up.to.line"
+            case .topLeft: return "arrow.up.left.square"
+            case .topRight: return "arrow.up.right.square"
+            case .center: return "scope"
+            }
+        }
+        
+        var coords: (x: Double, y: Double) {
+            switch self {
+            case .bottomCenter: return (0.5, 0.95)
+            case .bottomLeft: return (0.05, 0.95)
+            case .bottomRight: return (0.95, 0.95)
+            case .topCenter: return (0.5, 0.05)
+            case .topLeft: return (0.05, 0.05)
+            case .topRight: return (0.95, 0.05)
+            case .center: return (0.5, 0.5)
+            }
+        }
+    }
+    
+    mutating func applyPosition(_ preset: PositionPreset) {
+        let (px, py) = preset.coords
+        self.x = px
+        self.y = py
+    }
 }
 
 struct SavedTemplate: Identifiable, Codable, Equatable {

@@ -117,8 +117,8 @@ enum StampRenderer {
                     .foregroundColor: UIColor.white
                 ]
                 let textSize = joinedText.size(withAttributes: attrs)
-                let drawX = (w - textSize.width) / 2
-                let drawY = max(20, h * style.y - textSize.height / 2)
+                let drawX = max(20, min(w - textSize.width - 20, (w - textSize.width) * style.x))
+                let drawY = max(20, min(h - textSize.height - 20, (h - textSize.height) * style.y))
                 let drawRect = CGRect(x: drawX, y: drawY, width: textSize.width, height: textSize.height)
                 
                 let shadowAttrs: [NSAttributedString.Key: Any] = [
@@ -130,8 +130,8 @@ enum StampRenderer {
                 
             } else if style.layoutType == "badge" {
                 let badgeSize: CGFloat = min(w * 0.35, 360)
-                let bx = w - badgeSize - 40
-                let by = h - badgeSize - 40
+                let bx = max(20, min(w - badgeSize - 20, (w - badgeSize) * style.x))
+                let by = max(20, min(h - badgeSize - 20, (h - badgeSize) * style.y))
                 let badgeBox = CGRect(x: bx, y: by, width: badgeSize, height: badgeSize)
                 
                 UIColor.black.withAlphaComponent(style.opacity).setFill()
@@ -166,10 +166,17 @@ enum StampRenderer {
                 let boxPaddingY: CGFloat = 24
                 let boxPaddingX: CGFloat = 28
                 
-                let boxW = w * 0.90
+                let boxW = min(w * 0.90, max(300, w * 0.85))
                 let boxH = totalTextHeight + boxPaddingY * 2
-                let x = (w - boxW) / 2
-                let y = max(20, h * style.y - boxH / 2)
+                
+                let minX: CGFloat = 20
+                let maxX: CGFloat = max(minX, w - boxW - 20)
+                let x = max(minX, min(maxX, (w - boxW) * style.x))
+
+                let minY: CGFloat = 20
+                let maxY: CGFloat = max(minY, h - boxH - 20)
+                let y = max(minY, min(maxY, (h - boxH) * style.y))
+                
                 let box = CGRect(x: x, y: y, width: boxW, height: boxH)
 
                 UIColor.black.withAlphaComponent(style.opacity).setFill()

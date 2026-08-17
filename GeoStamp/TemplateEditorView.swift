@@ -400,6 +400,60 @@ struct TemplateEditorView: View {
                                 .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
                                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
                                 
+                                // Position Selector Card
+                                VStack(alignment: .leading, spacing: 14) {
+                                    Text(NSLocalizedString("VỊ TRÍ VÙNG THÔNG TIN", comment: ""))
+                                        .font(.system(.caption, design: .monospaced).bold())
+                                        .foregroundStyle(.white.opacity(0.4))
+                                        .tracking(1.5)
+                                    
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack(spacing: 8) {
+                                            ForEach(StampStyle.PositionPreset.allCases) { preset in
+                                                Button {
+                                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                        stamp.style.applyPosition(preset)
+                                                    }
+                                                } label: {
+                                                    HStack(spacing: 6) {
+                                                        Image(systemName: preset.icon)
+                                                        Text(preset.title)
+                                                    }
+                                                    .font(.caption.bold())
+                                                    .padding(.horizontal, 12)
+                                                    .padding(.vertical, 8)
+                                                    .background(abs(stamp.style.x - preset.coords.x) < 0.1 && abs(stamp.style.y - preset.coords.y) < 0.1 ? .yellow : .white.opacity(0.05), in: Capsule())
+                                                    .foregroundStyle(abs(stamp.style.x - preset.coords.x) < 0.1 && abs(stamp.style.y - preset.coords.y) < 0.1 ? .black : .white)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    VStack(spacing: 10) {
+                                        HStack {
+                                            Text(NSLocalizedString("Ngang (X)", comment: ""))
+                                                .font(.caption)
+                                                .foregroundStyle(.white.opacity(0.6))
+                                                .frame(width: 60, alignment: .leading)
+                                            Slider(value: $stamp.style.x, in: 0...1)
+                                                .tint(.yellow)
+                                        }
+                                        
+                                        HStack {
+                                            Text(NSLocalizedString("Dọc (Y)", comment: ""))
+                                                .font(.caption)
+                                                .foregroundStyle(.white.opacity(0.6))
+                                                .frame(width: 60, alignment: .leading)
+                                            Slider(value: $stamp.style.y, in: 0...1)
+                                                .tint(.yellow)
+                                        }
+                                    }
+                                    .padding(.top, 4)
+                                }
+                                .padding(.all, 16)
+                                .background(.white.opacity(0.02), in: RoundedRectangle(cornerRadius: 16))
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.06), lineWidth: 1))
+                                
                                 // Color Selector Card
                                 VStack(alignment: .leading, spacing: 12) {
                                     Text(NSLocalizedString("MÀU ĐIỂM NHẤN", comment: ""))

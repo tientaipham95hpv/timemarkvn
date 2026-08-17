@@ -169,12 +169,12 @@ struct CameraView: View {
 
                 // Watermark live preview area
                 stampPreview
-                    .offset(x: CGFloat((stamp.style.x - 0.5) * 80),
-                            y: CGFloat((stamp.style.y - 0.8) * 80))
+                    .offset(x: CGFloat((stamp.style.x - 0.5) * 140),
+                            y: CGFloat((stamp.style.y - 0.5) * 260))
                     .gesture(
                         DragGesture().onChanged { value in
-                            stamp.style.x = min(max(stamp.style.x + value.translation.width / 1000, 0.08), 0.92)
-                            stamp.style.y = min(max(stamp.style.y + value.translation.height / 1600, 0.10), 0.92)
+                            stamp.style.x = min(max(stamp.style.x + value.translation.width / 5000, 0.0), 1.0)
+                            stamp.style.y = min(max(stamp.style.y + value.translation.height / 5000, 0.0), 1.0)
                         }
                     )
 
