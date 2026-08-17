@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSCameraUsageDescription</key>
+    <string>TimeMark VN cần camera để chụp ảnh có đóng dấu.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>TimeMark VN cần vị trí để đóng dấu GPS, địa chỉ, bản đồ và la bàn.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>TimeMark VN cần thư viện ảnh để chọn ảnh và logo.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>TimeMark VN cần quyền lưu ảnh đã đóng dấu.</string>
+</dict>
+</plist>

@@ -1,0 +1,67 @@
+name: Build Unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Generate project
+        run: bash ./generate_project.sh
+
+      - name: Build unsigned app
+        run: |
+          set -euo pipefail
+          rm -rf build
+          mkdir -p build
+
+          xcodebuild             -project TimeMarkVN.xcodeproj             -scheme TimeMarkVN             -configuration Release             -sdk iphoneos             -derivedDataPath "$PWD/build/DerivedData"             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             CODE_SIGN_IDENTITY=""             DEVELOPMENT_TEAM=""             build
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+
+          APP_PATH=$(find "$PWD/build/DerivedData/Build/Products/Release-iphoneos"             -maxdepth 1 -type d -name "TimeMarkVN.app" -print -quit)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "Không tìm thấy TimeMarkVN.app"
+            find "$PWD/build/DerivedData/Build/Products" -maxdepth 3 -print
+            exit 1
+          fi
+
+          rm -rf build/Payload build/TimeMarkVN.ipa
+          mkdir -p build/Payload
+          cp -R "$APP_PATH" build/Payload/TimeMarkVN.app
+
+          # IPA is simply a ZIP containing Payload/<App>.app.
+          # It is intentionally unsigned; eSign can sign it later.
+          cd build
+          /usr/bin/zip -qry TimeMarkVN.ipa Payload
+
+          echo "Created unsigned IPA:"
+          ls -lh TimeMarkVN.ipa
+          echo "IPA contents:"
+          unzip -l TimeMarkVN.ipa | head -40
+
+      - name: Verify IPA structure
+        run: |
+          set -euo pipefail
+          test -f build/TimeMarkVN.ipa
+          unzip -l build/TimeMarkVN.ipa | grep -q "Payload/TimeMarkVN.app/"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: TimeMarkVN-Unsigned-IPA
+          path: build/TimeMarkVN.ipa
+          if-no-files-found: error
