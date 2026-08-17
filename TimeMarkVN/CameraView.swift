@@ -274,16 +274,18 @@ struct CameraView: View {
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.7), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.date) {
-                if location.isTimeSpoofed {
-                    let displayDate = location.gpsTimestamp ?? Date()
+                if let gpsTime = location.gpsTimestamp {
+                    let displayDate = location.isTimeSpoofed ? gpsTime : Date()
+                    let tag = location.isTimeSpoofed ? " [⚠️ \(NSLocalizedString("Giờ vệ tinh", comment: ""))]" : " [\(NSLocalizedString("Giờ vệ tinh", comment: ""))]"
                     Text(displayDate, format: .dateTime.day().month().year().hour().minute().second())
                         .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
                         .foregroundStyle(Color(hex: stamp.style.accentHex))
-                        + Text(" [⚠️ " + NSLocalizedString("Giờ vệ tinh", comment: "") + "]").font(.caption.bold()).foregroundColor(.red)
+                        + Text(tag).font(.caption.bold()).foregroundColor(location.isTimeSpoofed ? .red : .yellow)
                 } else {
                     Text(Date(), format: .dateTime.day().month().year().hour().minute().second())
                         .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.65), weight: .bold, designName: stamp.style.fontDesign))
                         .foregroundStyle(Color(hex: stamp.style.accentHex))
+                        + Text(" [⚠️ " + NSLocalizedString("Giờ thiết bị", comment: "") + "]").font(.caption.bold()).foregroundColor(.orange)
                 }
             }
             if stamp.style.isEnabled(.gps), let c = location.coordinate {
@@ -332,9 +334,15 @@ struct CameraView: View {
         
         if stamp.style.isEnabled(.address) { items.append("📍 " + tag + addr + offlineTag) }
         if stamp.style.isEnabled(.date) {
-            let displayDate = (location.isTimeSpoofed && location.gpsTimestamp != nil) ? location.gpsTimestamp! : Date()
-            let dateStr = DateFormatter.localizedString(from: displayDate, dateStyle: .medium, timeStyle: .medium)
-            items.append(dateStr + (location.isTimeSpoofed ? " [⚠️ Giờ vệ tinh]" : ""))
+            if let gpsTime = location.gpsTimestamp {
+                let displayDate = location.isTimeSpoofed ? gpsTime : Date()
+                let dateStr = DateFormatter.localizedString(from: displayDate, dateStyle: .medium, timeStyle: .medium)
+                let tag = location.isTimeSpoofed ? " [⚠️ Giờ vệ tinh]" : " [Giờ vệ tinh]"
+                items.append(dateStr + tag)
+            } else {
+                let dateStr = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium)
+                items.append(dateStr + " [⚠️ Giờ thiết bị]")
+            }
         }
         if stamp.style.isEnabled(.gps), let c = location.coordinate {
             items.append(String(format: "%.6f° N  %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy) + (location.isGpsSimulated ? " [⚠️ Giả lập]" : ""))

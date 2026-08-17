@@ -53,12 +53,14 @@ enum StampRenderer {
                 lines.append("📍 " + tag + addr + offlineTag)
             }
             if style.isEnabled(.date) {
-                if location.isTimeSpoofed {
-                    let displayDate = location.gpsTimestamp ?? Date()
+                if let gpsTime = location.gpsTimestamp {
+                    let displayDate = location.isTimeSpoofed ? gpsTime : Date()
                     let dateStr = DateFormatter.localizedString(from: displayDate, dateStyle: .medium, timeStyle: .medium)
-                    lines.append(dateStr + " [⚠️ " + NSLocalizedString("Giờ vệ tinh", comment: "") + "]")
+                    let tag = location.isTimeSpoofed ? " [⚠️ \(NSLocalizedString("Giờ vệ tinh", comment: ""))]" : " [\(NSLocalizedString("Giờ vệ tinh", comment: ""))]"
+                    lines.append(dateStr + tag)
                 } else {
-                    lines.append(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium))
+                    let dateStr = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium)
+                    lines.append(dateStr + " [⚠️ \(NSLocalizedString("Giờ thiết bị", comment: ""))]")
                 }
             }
             if style.isEnabled(.gps), let c = location.coordinate {
