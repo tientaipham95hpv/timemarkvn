@@ -83,7 +83,11 @@ struct TemplateEditorView: View {
                                     .foregroundStyle(Color(hex: stamp.style.accentHex))
                             }
                             if stamp.style.isEnabled(.gps) {
-                                Text(sampleCoordinate)
+                                Text(sampleCoordinate + " (±3.5m)")
+                                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+                            }
+                            if stamp.style.isEnabled(.compass) {
+                                Text(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), 120.0, 120.0.cardinalDirection))
                                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
                             }
                             if stamp.style.isEnabled(.weather) {

@@ -254,7 +254,11 @@ struct CameraView: View {
                     .foregroundStyle(Color(hex: stamp.style.accentHex))
             }
             if stamp.style.isEnabled(.gps), let c = location.coordinate {
-                Text(String(format: "%.6f° N  %.6f° E", c.latitude, c.longitude))
+                Text(String(format: "%.6f° N  %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy))
+                    .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
+            }
+            if stamp.style.isEnabled(.compass) {
+                Text(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), location.heading, location.heading.cardinalDirection))
                     .font(Font.customFont(size: CGFloat(stamp.style.fontSize * 0.55), weight: .semibold, designName: stamp.style.fontDesign))
             }
             if stamp.style.isEnabled(.weather) {

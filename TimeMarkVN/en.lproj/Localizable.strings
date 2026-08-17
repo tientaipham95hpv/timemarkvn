@@ -118,3 +118,11 @@
 "Đơn cách" = "Monospaced";
 "Bo tròn" = "Rounded";
 "Có chân" = "Serif";
+"Bắc" = "N";
+"Đông Bắc" = "NE";
+"Đông" = "E";
+"Đông Nam" = "SE";
+"Nam" = "S";
+"Tây Nam" = "SW";
+"Tây" = "W";
+"Tây Bắc" = "NW";

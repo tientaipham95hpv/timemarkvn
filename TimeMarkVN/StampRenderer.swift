@@ -24,13 +24,13 @@ enum StampRenderer {
                 lines.append(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium))
             }
             if style.isEnabled(.gps), let c = location.coordinate {
-                lines.append(String(format: "%.6f° N   %.6f° E", c.latitude, c.longitude))
+                lines.append(String(format: "%.6f° N   %.6f° E (±%.1fm)", c.latitude, c.longitude, location.accuracy))
             }
             if style.isEnabled(.altitude) {
                 lines.append(String(format: NSLocalizedString("Độ cao: %.0f m", comment: ""), location.altitude))
             }
             if style.isEnabled(.compass) {
-                lines.append(String(format: NSLocalizedString("La bàn: %.0f°", comment: ""), location.heading))
+                lines.append(String(format: NSLocalizedString("La bàn: %.0f° %@", comment: ""), location.heading, location.heading.cardinalDirection))
             }
             if style.isEnabled(.weather) {
                 lines.append("☁️ \(location.temperature) • \(location.weatherText)")

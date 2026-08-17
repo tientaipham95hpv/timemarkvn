@@ -145,3 +145,20 @@ extension Font {
         return Font.system(size: size, weight: weight, design: design)
     }
 }
+
+extension Double {
+    var cardinalDirection: String {
+        let directions = [
+            NSLocalizedString("Bắc", comment: ""),
+            NSLocalizedString("Đông Bắc", comment: ""),
+            NSLocalizedString("Đông", comment: ""),
+            NSLocalizedString("Đông Nam", comment: ""),
+            NSLocalizedString("Nam", comment: ""),
+            NSLocalizedString("Tây Nam", comment: ""),
+            NSLocalizedString("Tây", comment: ""),
+            NSLocalizedString("Tây Bắc", comment: "")
+        ]
+        let index = Int((self + 22.5) / 45.0) & 7
+        return directions[index]
+    }
+}

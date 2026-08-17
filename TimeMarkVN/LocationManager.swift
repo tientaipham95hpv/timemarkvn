@@ -7,6 +7,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     @Published var address = NSLocalizedString("Đang xác định vị trí...", comment: "")
     @Published var altitude: Double = 0
     @Published var heading: Double = 0
+    @Published var accuracy: Double = 0
     @Published var temperature = "--°C"
     @Published var weatherText = NSLocalizedString("Chưa có dữ liệu", comment: "")
 
@@ -27,6 +28,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         guard let loc = locations.last else { return }
         coordinate = loc.coordinate
         altitude = loc.altitude
+        accuracy = loc.horizontalAccuracy
 
         CLGeocoder().reverseGeocodeLocation(loc) { [weak self] places, _ in
             guard let p = places?.first else { return }
