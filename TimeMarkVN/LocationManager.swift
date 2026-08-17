@@ -13,6 +13,7 @@ protocol TelemetryData {
     var isGpsSimulated: Bool { get }
     var gpsTimestamp: Date? { get }
     var isOffline: Bool { get }
+    var timeZone: TimeZone? { get }
 }
 
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, TelemetryData {
@@ -30,6 +31,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     @Published var isGpsSimulated = false
     @Published var gpsTimestamp: Date? = nil
     @Published var isOffline = false
+    @Published var timeZone: TimeZone? = nil
 
     override init() {
         super.init()
@@ -76,6 +78,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
                 .compactMap { $0 }
             DispatchQueue.main.async {
                 self?.address = parts.joined(separator: ", ")
+                self?.timeZone = p.timeZone
             }
         }
     }

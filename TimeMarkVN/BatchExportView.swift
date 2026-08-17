@@ -150,17 +150,17 @@ struct BatchExportView: View {
         assets = list
     }
 
-    private func getAddress(for location: CLLocation?, completion: @escaping (String) -> Void) {
+    private func getTelemetryDetails(for location: CLLocation?, completion: @escaping (String, TimeZone?) -> Void) {
         guard let location = location else {
-            completion(NSLocalizedString("Không có vị trí", comment: ""))
+            completion(NSLocalizedString("Không có vị trí", comment: ""), nil)
             return
         }
         CLGeocoder().reverseGeocodeLocation(location) { places, _ in
             if let p = places?.first {
                 let parts = [p.name, p.subLocality, p.locality, p.administrativeArea].compactMap { $0 }
-                completion(parts.joined(separator: ", "))
+                completion(parts.joined(separator: ", "), p.timeZone)
             } else {
-                completion(String(format: "%.6f, %.6f", location.coordinate.latitude, location.coordinate.longitude))
+                completion(String(format: "%.6f, %.6f", location.coordinate.latitude, location.coordinate.longitude), nil)
             }
         }
     }
@@ -204,12 +204,13 @@ struct BatchExportView: View {
                 let assetLoc = asset.location
                 let assetDate = asset.creationDate ?? assetLoc?.timestamp ?? Date()
                 
-                self.getAddress(for: assetLoc) { address in
+                self.getTelemetryDetails(for: assetLoc) { address, timeZone in
                     let telemetry = EXIFTelemetry(
                         coordinate: assetLoc?.coordinate,
                         address: address,
                         altitude: assetLoc?.altitude ?? 0,
-                        gpsTimestamp: assetDate
+                        gpsTimestamp: assetDate,
+                        timeZone: timeZone
                     )
                     
                     let stamped = StampRenderer.render(
@@ -247,5 +248,6 @@ struct EXIFTelemetry: TelemetryData {
     var isGpsSimulated: Bool = false
     var gpsTimestamp: Date?
     var isOffline: Bool = false
+    var timeZone: TimeZone?
 }
 }
