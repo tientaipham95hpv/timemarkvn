@@ -159,12 +159,16 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             return
         }
         
-        PHPhotoLibrary.shared().performChanges {
-            let creationRequest = PHAssetCreationRequest.forAsset()
-            creationRequest.addResource(with: .photo, data: writeData as Data, options: nil)
-        } completionHandler: { success, _ in
-            DispatchQueue.main.async {
-                completion?(success)
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            guard status == .authorized || status == .limited else {
+                DispatchQueue.main.async { completion?(false) }
+                return
+            }
+            PHPhotoLibrary.shared().performChanges {
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                creationRequest.addResource(with: .photo, data: writeData as Data, options: nil)
+            } completionHandler: { success, _ in
+                DispatchQueue.main.async { completion?(success) }
             }
         }
     }

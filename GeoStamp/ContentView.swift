@@ -64,7 +64,7 @@ struct ContentView: View {
             }
         }
         .onChange(of: scenePhase) { oldValue, newValue in
-            if newValue == .background || newValue == .inactive {
+            if newValue == .background {
                 if isBiometricLockEnabled {
                     isUnlocked = false
                 }
@@ -81,8 +81,19 @@ struct ContentView: View {
         var error: NSError?
 
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            let reason = NSLocalizedString("Xác thực Face ID để bảo mật dữ liệu hiện trường", comment: "")
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+            let reason = NSLocalizedString("Xác thực Face ID để mở khóa GeoStamp", comment: "")
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, _ in
+                DispatchQueue.main.async {
+                    if success {
+                        withAnimation {
+                            isUnlocked = true
+                        }
+                    }
+                }
+            }
+        } else if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) {
+            let reason = NSLocalizedString("Xác thực mã PIN thiết bị để mở khóa GeoStamp", comment: "")
+            context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, _ in
                 DispatchQueue.main.async {
                     if success {
                         withAnimation {
@@ -92,13 +103,10 @@ struct ContentView: View {
                 }
             }
         } else {
-            context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: NSLocalizedString("Xác thực mã PIN thiết bị để mở khóa", comment: "")) { success, authenticationError in
-                DispatchQueue.main.async {
-                    if success {
-                        withAnimation {
-                            isUnlocked = true
-                        }
-                    }
+            // Biometrics & Device Passcode not configured on device
+            DispatchQueue.main.async {
+                withAnimation {
+                    isUnlocked = true
                 }
             }
         }

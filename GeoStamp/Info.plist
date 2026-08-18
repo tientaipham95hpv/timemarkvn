@@ -51,5 +51,7 @@
 	<string>GeoStamp cần micro để ghi chú giọng nói thành chữ.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>GeoStamp cần nhận dạng giọng nói để chuyển thành văn bản.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>GeoStamp cần Face ID để bảo mật và khóa ứng dụng.</string>
 </dict>
 </plist>
