@@ -58,21 +58,24 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let loc = locations.last else { return }
-        coordinate = loc.coordinate
-        altitude = loc.altitude
-        accuracy = loc.horizontalAccuracy
-        
         let gpsTime = loc.timestamp
-        gpsTimestamp = gpsTime
-        
         let systemTime = Date()
         let diff = abs(systemTime.timeIntervalSince(gpsTime))
-        isTimeSpoofed = diff > 300
         
+        var isSimulated = false
         if #available(iOS 15.0, *) {
             if let source = loc.sourceInformation {
-                isGpsSimulated = source.isSimulatedBySoftware
+                isSimulated = source.isSimulatedBySoftware
             }
+        }
+        
+        DispatchQueue.main.async {
+            self.coordinate = loc.coordinate
+            self.altitude = loc.altitude
+            self.accuracy = loc.horizontalAccuracy
+            self.gpsTimestamp = gpsTime
+            self.isTimeSpoofed = diff > 300
+            self.isGpsSimulated = isSimulated
         }
 
         CLGeocoder().reverseGeocodeLocation(loc) { [weak self] places, _ in
@@ -88,7 +91,9 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         let value = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
-        heading = value
+        DispatchQueue.main.async {
+            self.heading = value
+        }
     }
 
     func refreshWeather() {

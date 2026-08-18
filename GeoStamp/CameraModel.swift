@@ -16,9 +16,11 @@ final class CameraModel: NSObject, ObservableObject {
     func start() {
         AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
             guard granted else { return }
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 self?.configure()
-                self?.session.startRunning()
+                if !(self?.session.isRunning ?? false) {
+                    self?.session.startRunning()
+                }
             }
         }
     }

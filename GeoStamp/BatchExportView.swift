@@ -221,12 +221,12 @@ struct BatchExportView: View {
                         map: nil
                     )
                     
-                    LocationManager.saveImageWithMetadata(image: stamped, location: telemetry)
-                    
-                    DispatchQueue.main.async {
-                        self.progress = Double(index + 1) / Double(targets.count)
-                        index += 1
-                        processNext()
+                    LocationManager.saveImageWithMetadata(image: stamped, location: telemetry) { _ in
+                        DispatchQueue.main.async {
+                            self.progress = Double(index + 1) / Double(targets.count)
+                            index += 1
+                            processNext()
+                        }
                     }
                 }
             }
