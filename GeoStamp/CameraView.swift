@@ -440,15 +440,14 @@ struct CameraView: View {
             } else {
                 stampPreviewContent
                     .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
                     .background(.black.opacity(stamp.style.opacity),
                                 in: RoundedRectangle(cornerRadius: stamp.style.cornerRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: stamp.style.cornerRadius)
-                            .stroke(.white.opacity(0.1), lineWidth: 1)
+                            .stroke(.white.opacity(0.15), lineWidth: 1)
                     )
-                    .padding(.horizontal, 20)
             }
         }
     }

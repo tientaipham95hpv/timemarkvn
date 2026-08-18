@@ -90,8 +90,8 @@ enum StampRenderer {
                 }
             }
 
-            let lineSpacing: CGFloat = 8
-            let fontSize = style.fontSize * 1.5 // Scaling font size for output resolution
+            let lineSpacing: CGFloat = 6
+            let fontSize = style.fontSize * 1.2 // Compact crisp typography scaling
             
             var fontDescriptor = UIFont.systemFont(ofSize: fontSize, weight: .semibold).fontDescriptor
             switch style.fontDesign {
@@ -132,7 +132,7 @@ enum StampRenderer {
                 joinedText.draw(in: drawRect, withAttributes: attrs)
                 
             } else if style.layoutType == "badge" {
-                let badgeSize: CGFloat = min(w * 0.35, 360)
+                let badgeSize: CGFloat = min(w * 0.28, 280)
                 let bx = max(20, min(w - badgeSize - 20, (w - badgeSize) * posX))
                 let by = max(20, min(h - badgeSize - 20, (h - badgeSize) * posY))
                 let badgeBox = CGRect(x: bx, y: by, width: badgeSize, height: badgeSize)
@@ -141,13 +141,13 @@ enum StampRenderer {
                 UIBezierPath(ovalIn: badgeBox).fill()
                 
                 accentColor.setStroke()
-                let borderPath = UIBezierPath(ovalIn: badgeBox.insetBy(dx: 6, dy: 6))
-                borderPath.lineWidth = 4
+                let borderPath = UIBezierPath(ovalIn: badgeBox.insetBy(dx: 4, dy: 4))
+                borderPath.lineWidth = 3
                 borderPath.stroke()
                 
-                let badgeFont = UIFont(descriptor: fontDescriptor, size: fontSize * 0.72)
+                let badgeFont = UIFont(descriptor: fontDescriptor, size: fontSize * 0.65)
                 let badgeLineHeight = "Test".size(withAttributes: [.font: badgeFont]).height
-                let innerContentHeight = CGFloat(min(lines.count, 4)) * badgeLineHeight + CGFloat(max(0, min(lines.count, 4) - 1)) * 4
+                let innerContentHeight = CGFloat(min(lines.count, 4)) * badgeLineHeight + CGFloat(max(0, min(lines.count, 4) - 1)) * 3
                 
                 var currentY = badgeBox.midY - innerContentHeight / 2
                 for line in lines.prefix(4) {
@@ -157,19 +157,25 @@ enum StampRenderer {
                         .foregroundColor: isAccent ? accentColor : .white
                     ]
                     let size = line.size(withAttributes: lineAttrs)
-                    let lineX = badgeBox.midX - min(size.width, badgeSize - 24) / 2
-                    let lineRect = CGRect(x: lineX, y: currentY, width: min(size.width, badgeSize - 24), height: badgeLineHeight)
+                    let lineX = badgeBox.midX - min(size.width, badgeSize - 20) / 2
+                    let lineRect = CGRect(x: lineX, y: currentY, width: min(size.width, badgeSize - 20), height: badgeLineHeight)
                     
                     line.draw(in: lineRect, withAttributes: lineAttrs)
-                    currentY += badgeLineHeight + 4
+                    currentY += badgeLineHeight + 3
                 }
                 
             } else {
                 let totalTextHeight = CGFloat(lines.count) * singleLineHeight + CGFloat(max(0, lines.count - 1)) * lineSpacing
-                let boxPaddingY: CGFloat = 24
-                let boxPaddingX: CGFloat = 28
+                let boxPaddingY: CGFloat = 16
+                let boxPaddingX: CGFloat = 20
                 
-                let boxW = min(w * 0.90, max(300, w * 0.85))
+                var maxLineWidth: CGFloat = 0
+                for line in lines {
+                    let size = line.size(withAttributes: [.font: font])
+                    if size.width > maxLineWidth { maxLineWidth = size.width }
+                }
+                
+                let boxW = min(w * 0.85, max(w * 0.35, maxLineWidth + boxPaddingX * 2))
                 let boxH = totalTextHeight + boxPaddingY * 2
                 
                 let minX: CGFloat = 20
